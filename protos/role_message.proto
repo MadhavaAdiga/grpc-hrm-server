@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option go_package = "/";
+
+message Role {
+    string name = 1;
+    bool active = 2;
+    repeated string permissionIds =3;
+}

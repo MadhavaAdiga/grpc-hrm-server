@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "/";
+
+import "google/protobuf/timestamp.proto";
+
+message Organization {
+    enum Status {
+        UNKNOWN = 0;
+        ACTIVE = 1;
+        SUSPENDED = 2;
+    }
+    string id = 1;
+    string name = 2;
+    // name of the creator
+    string createdBy = 3;
+    // id of creator of the organization
+    string creatorId = 4;
+    Status status = 5;
+    // name of user
+    string updated_by = 6;
+    // id of updater of the organization
+    string updater_id = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}

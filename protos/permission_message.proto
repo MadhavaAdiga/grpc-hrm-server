@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "/";
+
+message Permission {
+    string name = 1;
+    PermissionType type = 2;
+    bool active = 3;
+    // role?
+}
+
+// todo: update enum
+enum PermissionType {
+    UNKNOWN = 0;
+    FULLACCESS = 1;
+    RESTRICTEDACCESS = 2;
+    DENIED = 3;
+}
+
+/*
+permissions -
+https://docs.oracle.com/cd/E66143_01/doc.850/e77654/c_basic_admin_hr_privileges.htm#LMUSE-HumanResourcesPrivileges-C3A2365E
+*/

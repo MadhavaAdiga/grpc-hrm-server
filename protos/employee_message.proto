@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package ="/";
+
+import "organization_message.proto";
+import "role_message.proto";
+import "payroll_message.proto";
+import "google/protobuf/timestamp.proto";
+
+message Employee {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string user_name = 4;
+    string password = 5;
+    string address = 6;
+    int32 contact_number = 7;
+    Organization organization = 8;
+    Role role = 9; 
+    bool active = 10;
+    Payroll payroll = 11;
+    string create_by = 12;
+    google.protobuf.Timestamp createdat = 13;
+    string updatedby = 14;
+    google.protobuf.Timestamp updated_at = 15;
+}  

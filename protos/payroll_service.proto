@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package ="/";
+
+import "payroll_message.proto";
+
+message AddPayrollRequest{
+    string username = 1;
+    // ctc
+    int32 yearly = 2;
+    // username 
+    string created_by = 3;
+}
+// respond with the username of employee
+message PayrollResponse{
+    string username = 1;
+}
+
+message UpdatePayrollRequest {
+    string username = 1;
+    // ctc
+    int32 yearly = 2;
+    // username
+    string updated_by = 3;
+}
+
+message FindEmployeePayrollRequest { string username = 1; }
+message FindEmployeePayrollResponse { Payroll payroll = 1; }
+
+
+service PayrollService {
+    // add payroll to and existing employee
+    rpc AddPayroll(AddPayrollRequest) returns (PayrollResponse){};
+    // update payroll of an existing employee
+    rpc UpdatePayroll(UpdatePayrollRequest) returns (PayrollResponse){};
+    // find payroll of an employee
+    rpc FindEmployeePayroll(FindEmployeePayrollRequest) returns (FindEmployeePayrollResponse){};
+}

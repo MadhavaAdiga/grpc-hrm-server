@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package ="/";
+
+import "organization_message.proto";
+
+message CreateOrganizationRequest {
+    string name = 1;
+    // user id of creator
+    string creator_id = 2;
+}
+message CreateOrganizationResponse {
+    string id = 1;
+}
+
+message SearchOrganizationRequest { string name = 1; }
+message SearchOrganizationResponse { Organization  organization = 1;}
+
+service OrganizatoinService {
+    // rpc to create a new organization
+    rpc CreateOrganization(CreateOrganizationRequest) returns(CreateOrganizationResponse){};
+    // rpc to search organization
+    rpc SearchOrganization(SearchOrganizationRequest) returns (SearchOrganizationResponse){};
+}
