@@ -30,3 +30,6 @@ migrate-up:
 # migrate down last one
 migrate-down:
 	migrate -path db/migration -database "postgresql://root:docker_postgres@localhost:5432/hrm_db?sslmode=disable" -verbose down 1
+
+server:
+	go run cmd/server/main.go	
