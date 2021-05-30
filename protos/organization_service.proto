@@ -13,12 +13,12 @@ message CreateOrganizationResponse {
     string id = 1;
 }
 
-message SearchOrganizationRequest { string name = 1; }
-message SearchOrganizationResponse { Organization  organization = 1;}
+message FindOrganizationRequest { string name = 1; }
+message FindOrganizationResponse { Organization  organization = 1;}
 
 service OrganizatoinService {
     // rpc to create a new organization
     rpc CreateOrganization(CreateOrganizationRequest) returns(CreateOrganizationResponse){};
     // rpc to search organization
-    rpc SearchOrganization(SearchOrganizationRequest) returns (SearchOrganizationResponse){};
+    rpc FindOrganization(FindOrganizationRequest) returns (FindOrganizationResponse){};
 }

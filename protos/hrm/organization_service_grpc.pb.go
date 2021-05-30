@@ -21,7 +21,7 @@ type OrganizatoinServiceClient interface {
 	// rpc to create a new organization
 	CreateOrganization(ctx context.Context, in *CreateOrganizationRequest, opts ...grpc.CallOption) (*CreateOrganizationResponse, error)
 	// rpc to search organization
-	SearchOrganization(ctx context.Context, in *SearchOrganizationRequest, opts ...grpc.CallOption) (*SearchOrganizationResponse, error)
+	FindOrganization(ctx context.Context, in *FindOrganizationRequest, opts ...grpc.CallOption) (*FindOrganizationResponse, error)
 }
 
 type organizatoinServiceClient struct {
@@ -41,9 +41,9 @@ func (c *organizatoinServiceClient) CreateOrganization(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *organizatoinServiceClient) SearchOrganization(ctx context.Context, in *SearchOrganizationRequest, opts ...grpc.CallOption) (*SearchOrganizationResponse, error) {
-	out := new(SearchOrganizationResponse)
-	err := c.cc.Invoke(ctx, "/OrganizatoinService/SearchOrganization", in, out, opts...)
+func (c *organizatoinServiceClient) FindOrganization(ctx context.Context, in *FindOrganizationRequest, opts ...grpc.CallOption) (*FindOrganizationResponse, error) {
+	out := new(FindOrganizationResponse)
+	err := c.cc.Invoke(ctx, "/OrganizatoinService/FindOrganization", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ type OrganizatoinServiceServer interface {
 	// rpc to create a new organization
 	CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error)
 	// rpc to search organization
-	SearchOrganization(context.Context, *SearchOrganizationRequest) (*SearchOrganizationResponse, error)
+	FindOrganization(context.Context, *FindOrganizationRequest) (*FindOrganizationResponse, error)
 	mustEmbedUnimplementedOrganizatoinServiceServer()
 }
 
@@ -68,8 +68,8 @@ type UnimplementedOrganizatoinServiceServer struct {
 func (UnimplementedOrganizatoinServiceServer) CreateOrganization(context.Context, *CreateOrganizationRequest) (*CreateOrganizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrganization not implemented")
 }
-func (UnimplementedOrganizatoinServiceServer) SearchOrganization(context.Context, *SearchOrganizationRequest) (*SearchOrganizationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchOrganization not implemented")
+func (UnimplementedOrganizatoinServiceServer) FindOrganization(context.Context, *FindOrganizationRequest) (*FindOrganizationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindOrganization not implemented")
 }
 func (UnimplementedOrganizatoinServiceServer) mustEmbedUnimplementedOrganizatoinServiceServer() {}
 
@@ -102,20 +102,20 @@ func _OrganizatoinService_CreateOrganization_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrganizatoinService_SearchOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchOrganizationRequest)
+func _OrganizatoinService_FindOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindOrganizationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OrganizatoinServiceServer).SearchOrganization(ctx, in)
+		return srv.(OrganizatoinServiceServer).FindOrganization(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/OrganizatoinService/SearchOrganization",
+		FullMethod: "/OrganizatoinService/FindOrganization",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizatoinServiceServer).SearchOrganization(ctx, req.(*SearchOrganizationRequest))
+		return srv.(OrganizatoinServiceServer).FindOrganization(ctx, req.(*FindOrganizationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,8 +132,8 @@ var OrganizatoinService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrganizatoinService_CreateOrganization_Handler,
 		},
 		{
-			MethodName: "SearchOrganization",
-			Handler:    _OrganizatoinService_SearchOrganization_Handler,
+			MethodName: "FindOrganization",
+			Handler:    _OrganizatoinService_FindOrganization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -23,12 +23,12 @@ message CreateEmployeeResponse {
 }
 
 //  request using a filter
-message SearchEmployeeRequest { EmployeeFilter filter = 1; }
-message SearchEmployeeResponse { Employee employee = 1; };
+message FindEmployeeRequest { EmployeeFilter filter = 1; }
+message FindEmployeeResponse { Employee employee = 1; };
 
 service EmployeeService {
     // create a user employed by the organization  
     rpc CreateEmployee(CreateEmployeeRequest) returns (CreateEmployeeResponse){};
     // search for an employees in the organization
-    rpc SearchEmployee(SearchEmployeeRequest) returns (SearchEmployeeResponse){};
+    rpc FindEmployee(FindEmployeeRequest) returns (FindEmployeeResponse){};
 }

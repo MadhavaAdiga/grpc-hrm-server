@@ -21,7 +21,7 @@ type EmployeeServiceClient interface {
 	// create a user employed by the organization
 	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*CreateEmployeeResponse, error)
 	// search for an employees in the organization
-	SearchEmployee(ctx context.Context, in *SearchEmployeeRequest, opts ...grpc.CallOption) (*SearchEmployeeResponse, error)
+	FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*FindEmployeeResponse, error)
 }
 
 type employeeServiceClient struct {
@@ -41,9 +41,9 @@ func (c *employeeServiceClient) CreateEmployee(ctx context.Context, in *CreateEm
 	return out, nil
 }
 
-func (c *employeeServiceClient) SearchEmployee(ctx context.Context, in *SearchEmployeeRequest, opts ...grpc.CallOption) (*SearchEmployeeResponse, error) {
-	out := new(SearchEmployeeResponse)
-	err := c.cc.Invoke(ctx, "/EmployeeService/SearchEmployee", in, out, opts...)
+func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*FindEmployeeResponse, error) {
+	out := new(FindEmployeeResponse)
+	err := c.cc.Invoke(ctx, "/EmployeeService/FindEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ type EmployeeServiceServer interface {
 	// create a user employed by the organization
 	CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error)
 	// search for an employees in the organization
-	SearchEmployee(context.Context, *SearchEmployeeRequest) (*SearchEmployeeResponse, error)
+	FindEmployee(context.Context, *FindEmployeeRequest) (*FindEmployeeResponse, error)
 	mustEmbedUnimplementedEmployeeServiceServer()
 }
 
@@ -68,8 +68,8 @@ type UnimplementedEmployeeServiceServer struct {
 func (UnimplementedEmployeeServiceServer) CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployee not implemented")
 }
-func (UnimplementedEmployeeServiceServer) SearchEmployee(context.Context, *SearchEmployeeRequest) (*SearchEmployeeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchEmployee not implemented")
+func (UnimplementedEmployeeServiceServer) FindEmployee(context.Context, *FindEmployeeRequest) (*FindEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindEmployee not implemented")
 }
 func (UnimplementedEmployeeServiceServer) mustEmbedUnimplementedEmployeeServiceServer() {}
 
@@ -102,20 +102,20 @@ func _EmployeeService_CreateEmployee_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EmployeeService_SearchEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchEmployeeRequest)
+func _EmployeeService_FindEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindEmployeeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EmployeeServiceServer).SearchEmployee(ctx, in)
+		return srv.(EmployeeServiceServer).FindEmployee(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/EmployeeService/SearchEmployee",
+		FullMethod: "/EmployeeService/FindEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EmployeeServiceServer).SearchEmployee(ctx, req.(*SearchEmployeeRequest))
+		return srv.(EmployeeServiceServer).FindEmployee(ctx, req.(*FindEmployeeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,8 +132,8 @@ var EmployeeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EmployeeService_CreateEmployee_Handler,
 		},
 		{
-			MethodName: "SearchEmployee",
-			Handler:    _EmployeeService_SearchEmployee_Handler,
+			MethodName: "FindEmployee",
+			Handler:    _EmployeeService_FindEmployee_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
