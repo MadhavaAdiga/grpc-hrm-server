@@ -34,7 +34,7 @@ func TestFindOrganization(t *testing.T) {
 
 func createOrganization(t *testing.T) db.Organization {
 	arg := db.CreateOrganizationParam{
-		Name:      "abc",
+		Name:      utils.RandomName(),
 		CreatedBy: utils.RandomName(),
 		Status:    0,
 		CreatorID: uuid.New().String(),

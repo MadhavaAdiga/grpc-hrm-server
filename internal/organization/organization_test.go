@@ -37,11 +37,45 @@ func TestCreateOrganization(t *testing.T) {
 
 	res, err := client.CreateOrganization(context.Background(), req)
 	require.NoError(t, err)
-	require.NotNil(t, req)
+	require.NotNil(t, res)
 
 	require.NotEqual(t, res.Id, uuid.Nil)
 
 }
+
+// func TestFindOrganization(t *testing.T) {
+// 	t.Parallel()
+
+// 	ctrl := gomock.NewController(t)
+// 	defer ctrl.Finish()
+// 	store := mockdb.NewMockStore(ctrl)
+
+// 	store.EXPECT().CreateOrganization(gomock.Any(), gomock.Any()).Times(1)
+
+// 	serverAdr := startTestServer(t, store)
+// 	client := createTestClient(t, serverAdr)
+
+// 	req := &hrm.CreateOrganizationRequest{
+// 		Name:      utils.RandomName(),
+// 		CreatorId: uuid.New().String(),
+// 	}
+// 	// create a new organiztion
+// 	res1, err := client.CreateOrganization(context.Background(), req)
+// 	require.NoError(t, err)
+// 	require.NotNil(t, res1)
+
+// 	var organization db.Organization
+// 	store.EXPECT().FindOrganizationByName(gomock.Any(), gomock.Any()).Times(1).Return(organization, nil)
+
+// 	res2, err := client.FindOrganization(context.Background(), &hrm.FindOrganizationRequest{
+// 		Name: req.Name,
+// 	})
+// 	require.NoError(t, err)
+// 	require.NotNil(t, res2)
+
+// 	require.Equal(t, res1.Id, res2.GetOrganization().Id)
+// 	// require.Equal(t, res2.GetOrganization().Name, req.Name)
+// }
 
 func startTestServer(t *testing.T, store db.Store) string {
 
