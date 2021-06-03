@@ -3,27 +3,29 @@ syntax = "proto3";
 option go_package ="/hrm";
 
 import "employee_message.proto";
-import "filter_message.proto";
 
 message CreateEmployeeRequest {
-    string first_name = 1;
-    string last_name = 2;
-    string user_name = 3;
-    string password = 4;
-    string address = 5;
-    int32 contact_number = 6;
-    string organization_name = 7;
-    string role_name = 8; 
-    bool active = 9;
-    string create_by = 10;
+    // unique value for User
+    string user_name = 1;
+    // unique value for Organization 
+    string organization_name = 2;
+    // Employee role from Role
+    string role_name = 3; 
+    bool active = 4;
+    string create_by = 5;
 }
 
 message CreateEmployeeResponse {
     string id = 1;
 }
 
+message Filter {
+    string username = 1;    
+    string role_name =2; 
+}
+
 //  request using a filter
-message FindEmployeeRequest { EmployeeFilter filter = 1; }
+message FindEmployeeRequest { Filter filter = 1; }
 message FindEmployeeResponse { Employee employee = 1; };
 
 service EmployeeService {

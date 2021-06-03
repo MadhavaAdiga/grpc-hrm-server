@@ -16,7 +16,7 @@ message CreateOrganizationResponse {
 message FindOrganizationRequest { string name = 1; }
 message FindOrganizationResponse { Organization  organization = 1;}
 
-service OrganizatoinService {
+service OrganizationService {
     // rpc to create a new organization
     rpc CreateOrganization(CreateOrganizationRequest) returns(CreateOrganizationResponse){};
     // rpc to search organization

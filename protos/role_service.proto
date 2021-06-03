@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package ="/hrm";
+
+import "permission.proto";
+
+message CreateRoleRequest {
+    string name = 1;
+    repeated Permission permissions = 2;
+    // username
+    string createdBy = 3;
+}
+
+message CreateRoleResponse {
+    string id = 1;
+}
+
+// TODO search role by permission
+// TODO get back list of roles 
+service RoleService {
+    // create a role for the orgaization
+    rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}; 
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option go_package ="/hrm";
+
+import "user_message.proto";
+
+message CreateUserRequest {
+    string first_name = 1;
+    string last_name = 2;
+    string user_name = 3;
+    string password = 4;
+    string address = 5;
+    string email_id = 6;
+    int32 contact_number = 7;
+}
+message CreateUserResponse {
+    string id = 1;
+}
+
+message FindUserRequest{ string user_name = 1; }
+message FindUserResponse{ User user = 1;}
+
+service UserService {
+    // create a user of the system
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {};
+    // find user of the system by name
+    rpc FindUser(FindUserRequest) returns (FindUserResponse) {};
+}

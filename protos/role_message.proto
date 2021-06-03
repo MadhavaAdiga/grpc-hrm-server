@@ -2,8 +2,18 @@ syntax = "proto3";
 
 option go_package = "/hrm";
 
+import "permission.proto";
+import "google/protobuf/timestamp.proto";
+
 message Role {
-    string name = 1;
-    bool active = 2;
-    repeated string permissionIds =3;
+    string id = 1;
+    string name = 2;
+    bool active = 3;
+    string organization_name = 4;
+    repeated Permission permissions = 5;
+    string createdBy = 6;
+    string updated_by = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+
 }

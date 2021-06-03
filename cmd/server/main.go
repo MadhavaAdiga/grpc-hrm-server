@@ -52,7 +52,7 @@ func main() {
 	// create a new grpc server
 	grpcServer := grpc.NewServer()
 	// register servers
-	hrm.RegisterOrganizatoinServiceServer(grpcServer, organizationServer)
+	hrm.RegisterOrganizationServiceServer(grpcServer, organizationServer)
 
 	reflection.Register(grpcServer)
 

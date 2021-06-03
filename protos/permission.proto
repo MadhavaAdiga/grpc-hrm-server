@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "/hrm";
+
+enum Permission {
+    UNKNOWN = 0;
+    CAN_ADD_EMPLOYEE = 1;
+    CAN_VIEW_EMPLOYEE =2;
+    CAN_MODIFY_EMPLOYEE = 3;
+    CAN_Add_PAY = 4;
+    CAN_MODIFY_PAY = 5;
+    ADMIN = 6;
+    CAN_VIEW_SALARIES = 7;
+}

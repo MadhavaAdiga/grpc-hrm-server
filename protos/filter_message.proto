@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-option go_package ="/hrm";
-
-message EmployeeFilter {
-    string username = 1;    
-    string role_name =2; 
-}

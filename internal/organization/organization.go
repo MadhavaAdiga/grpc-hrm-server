@@ -16,10 +16,10 @@ import (
 type OrganizationServer struct {
 	store db.Store
 	log   hclog.Logger
-	hrm.UnimplementedOrganizatoinServiceServer
+	hrm.UnimplementedOrganizationServiceServer
 }
 
-func NewOrganizationServer(store db.Store, l hclog.Logger) hrm.OrganizatoinServiceServer {
+func NewOrganizationServer(store db.Store, l hclog.Logger) hrm.OrganizationServiceServer {
 	return &OrganizationServer{
 		store: store,
 		log:   l.Named("organization_server"),
