@@ -58,7 +58,7 @@ func TestFindOrganization(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-
+	// create organization stub
 	store.EXPECT().CreateOrganization(gomock.Any(), gomock.All()).Times(1).Return(org, nil)
 
 	serverAdr := startTestServer(t, store)

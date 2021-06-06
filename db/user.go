@@ -47,7 +47,7 @@ const findUser = `
 	WHERE user_name = $1 LIMIT 1
 `
 
-func (store *SQLStore) FindUser(ctx context.Context, userName string) (User, error) {
+func (store *SQLStore) FindUserByName(ctx context.Context, userName string) (User, error) {
 	row := store.db.QueryRowContext(ctx, findUser, userName)
 
 	var u User

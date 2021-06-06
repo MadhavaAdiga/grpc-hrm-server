@@ -13,6 +13,7 @@ type Store interface {
 	CreateOrganization(ctx context.Context, param CreateOrganizationParam) (Organization, error)
 	FindOrganizationByName(ctx context.Context, name string) (Organization, error)
 	CreateUser(ctx context.Context, arg CreateUserParam) (uuid.UUID, error)
+	FindUserByName(ctx context.Context, userName string) (User, error)
 }
 
 // A compile time check to make sure Oueries implements Querier

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserServer struct {
@@ -63,7 +64,7 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 	// store to db
 	id, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to create new user: %v", err)
+		return nil, status.Errorf(codes.Internal, "unable to create new user: %v", err) // TODO send specific errors
 	}
 	// build response object
 	res := &hrm.CreateUserResponse{
@@ -75,5 +76,30 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 
 // find user of the system by name
 func (server *UserServer) FindUser(ctx context.Context, req *hrm.FindUserRequest) (*hrm.FindUserResponse, error) {
-	return nil, nil
+
+	userName := req.UserName
+	if len(userName) == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "username is required")
+	}
+
+	user, err := server.store.FindUserByName(ctx, userName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "username: %s does not exists", userName)
+	}
+
+	res := &hrm.FindUserResponse{
+		User: &hrm.User{
+			Id:            user.ID.String(),
+			FirstName:     user.FirstName,
+			LastName:      user.LastName,
+			UserName:      user.UserName,
+			Address:       user.Address,
+			EmailId:       user.Email,
+			ContactNumber: user.ContactNumber,
+			Createdat:     timestamppb.New(user.CreatedAt),
+			UpdatedAt:     timestamppb.New(user.UpdatedAt),
+		},
+	}
+
+	return res, nil
 }

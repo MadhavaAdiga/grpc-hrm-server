@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	mockdb "github.com/MadhavaAdiga/grpc-hrm-server/db/mock"
@@ -74,6 +75,45 @@ func TestCreateUser(t *testing.T) {
 			test.checkresponse(t, res)
 		})
 	}
+
+}
+
+func TestFindUserByName(t *testing.T) {
+	t.Parallel()
+
+	userName := utils.RandomName()
+
+	user := db.User{
+		ID:             uuid.New(),
+		FirstName:      utils.RandomName(),
+		LastName:       utils.RandomName(),
+		UserName:       userName,
+		HashedPassword: "secret",
+		Address:        utils.RandomString(8),
+		Email:          "a@example.com",
+		ContactNumber:  uint32(utils.RandomContactNum()),
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	store := mockdb.NewMockStore(ctrl)
+
+	store.EXPECT().FindUserByName(gomock.Any(), gomock.All()).Times(1).Return(user, nil)
+
+	serverAddr := startTestServer(t, store)
+	client := createTestClient(t, serverAddr)
+
+	arg := &hrm.FindUserRequest{
+		UserName: userName,
+	}
+	res, err := client.FindUser(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+
+	require.NotEqual(t, res.User.Id, uuid.Nil.String())
+	require.NotZero(t, res.User.Createdat)
 
 }
 
