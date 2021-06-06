@@ -11,7 +11,7 @@ message CreateUserRequest {
     string password = 4;
     string address = 5;
     string email_id = 6;
-    int32 contact_number = 7;
+    uint32 contact_number = 7;
 }
 message CreateUserResponse {
     string id = 1;

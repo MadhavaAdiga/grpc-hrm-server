@@ -2,9 +2,6 @@ generate:
 	protoc -I protos/ protos/*.proto --go_out=protos/
 	protoc -I protos/ protos/*.proto --go-grpc_out=protos/
 
-create-container-postgres:
-	docker run -p 5432:5432 --name postgres13 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=docker_postgres -d postgres:13-alpine
-
 createdb:
 	docker exec -it postgres13 createdb --username=root --owner=root hrm_db
 
