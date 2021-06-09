@@ -8,6 +8,7 @@ import (
 	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
+	"github.com/lib/pq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -26,7 +27,7 @@ func NewOrganizationServer(store db.Store, l hclog.Logger) hrm.OrganizationServi
 	}
 }
 
-// rpc to create a new organization
+// RPC implementation to create a new organization
 func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *hrm.CreateOrganizationRequest) (*hrm.CreateOrganizationResponse, error) {
 	// name of organization
 	title := req.GetName()
@@ -34,6 +35,7 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 
 	// check for valid title
 	if len(title) < 0 {
+		server.log.Info("invalid title, empty")
 		return nil, status.Errorf(codes.InvalidArgument, "title is required")
 	}
 
@@ -56,6 +58,13 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 	// save to store
 	organization, err := server.store.CreateOrganization(ctx, arg)
 	if err != nil {
+		pqError, ok := err.(*pq.Error)
+		if ok {
+			switch pqError.Code.Name() {
+			case "unique_violation":
+				return nil, status.Errorf(codes.AlreadyExists, "organization with name:%s alreaddy exists", title)
+			}
+		}
 		server.log.Info("failed to create organization", "error", err)
 		return nil, status.Errorf(codes.Internal, "unable to create new organization: %v", err)
 	}
@@ -67,7 +76,7 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 	return res, nil
 }
 
-// rpc to search organization
+// RPC implemetation to search organization
 func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm.FindOrganizationRequest) (*hrm.FindOrganizationResponse, error) {
 	// name of organization
 	title := req.GetName()
@@ -79,7 +88,7 @@ func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm
 		return nil, status.Errorf(codes.NotFound, "organization is not found: %v", err)
 	}
 
-	// protobuf organization message
+	// map db.Organization to protobuf organization message
 	o := &hrm.Organization{
 		Id:        organization.ID.String(),
 		CreatedBy: organization.CreatedBy,

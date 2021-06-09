@@ -7,6 +7,7 @@ import (
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/internal/organization"
+	"github.com/MadhavaAdiga/grpc-hrm-server/internal/user"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
@@ -41,6 +42,7 @@ func main() {
 	store := db.NewSQlStore(conn)
 
 	// create servers
+	userServer := user.NewUserServer(store, log)
 	organizationServer := organization.NewOrganizationServer(store, log)
 
 	// create tcp connection
@@ -52,6 +54,7 @@ func main() {
 	// create a new grpc server
 	grpcServer := grpc.NewServer()
 	// register servers
+	hrm.RegisterUserServiceServer(grpcServer, userServer)
 	hrm.RegisterOrganizationServiceServer(grpcServer, organizationServer)
 
 	reflection.Register(grpcServer)

@@ -15,6 +15,7 @@ const (
 	DBSource = "postgresql://root:docker_postgres@localhost:5432/hrm_db?sslmode=disable"
 )
 
+// Global varibles for db testing
 var (
 	testSQLStore *db.SQLStore
 	testDB       *sql.DB

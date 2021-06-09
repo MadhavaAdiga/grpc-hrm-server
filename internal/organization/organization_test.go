@@ -85,6 +85,7 @@ func TestFindOrganization(t *testing.T) {
 	require.Equal(t, res2.GetOrganization().Name, req.Name)
 }
 
+// Helper function start a test server
 func startTestServer(t *testing.T, store db.Store) string {
 
 	server := organization.NewOrganizationServer(store, hclog.Default())
@@ -100,6 +101,7 @@ func startTestServer(t *testing.T, store db.Store) string {
 	return listener.Addr().String()
 }
 
+// Helper function create a client
 func createTestClient(t *testing.T, serverAddress string) hrm.OrganizationServiceClient {
 	// connect to grpc server, insecure is used for testing
 	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())

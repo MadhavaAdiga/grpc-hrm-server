@@ -17,3 +17,13 @@ func TestNumberLen(t *testing.T) {
 	count = utils.NumberLen(1234567891234)
 	require.Equal(t, 13, count)
 }
+
+func TestValidateMail(t *testing.T) {
+	s := "asdas"
+	isemail := utils.ValidateMail(s)
+	require.False(t, isemail)
+
+	valid := "a@example.com"
+	isemail = utils.ValidateMail(valid)
+	require.True(t, isemail)
+}

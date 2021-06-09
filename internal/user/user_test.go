@@ -2,6 +2,8 @@ package user_test
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"net"
 	"testing"
 	"time"
@@ -14,16 +16,20 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
+	"github.com/jinzhu/copier"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
 
+/*
+ Table driven test for CreateUser RPC
+*/
 func TestCreateUser(t *testing.T) {
 	t.Parallel()
 
 	usrId := uuid.New()
 
-	req := &hrm.CreateUserRequest{
+	reqStub := &hrm.CreateUserRequest{
 		FirstName:     utils.RandomName(),
 		LastName:      utils.RandomName(),
 		UserName:      utils.RandomName(),
@@ -35,21 +41,82 @@ func TestCreateUser(t *testing.T) {
 
 	testcase := []struct {
 		name          string
-		req           *hrm.CreateUserRequest
+		buildReq      func(t *testing.T, req *hrm.CreateUserRequest) *hrm.CreateUserRequest
 		buildStub     func(store *mockdb.MockStore)
-		checkresponse func(t *testing.T, res *hrm.CreateUserResponse)
+		checkresponse func(t *testing.T, res *hrm.CreateUserResponse, err error)
 	}{
 		{
 			name: "Best case",
-			req:  req,
+			buildReq: func(t *testing.T, req *hrm.CreateUserRequest) *hrm.CreateUserRequest {
+				return req
+			},
 			buildStub: func(store *mockdb.MockStore) {
 				store.EXPECT().CreateUser(gomock.Any(), gomock.Any()).
 					Times(1).Return(usrId, nil)
 			},
-			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse) {
+			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
+				require.NoError(t, err)
 				id, err := uuid.Parse(res.GetId())
 				require.NoError(t, err)
 				require.NotEqual(t, uuid.Nil, id)
+			},
+		}, {
+			name: "Repeated Username",
+			buildReq: func(t *testing.T, req *hrm.CreateUserRequest) *hrm.CreateUserRequest {
+				return req
+			},
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().CreateUser(gomock.Any(), gomock.Any()).
+					Times(1).Return(uuid.Nil, sql.ErrNoRows)
+
+			},
+			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
+				require.Error(t, err, "unique_violation")
+				id, err := uuid.Parse(res.GetId())
+				require.Error(t, err, "invalid UUID length")
+				require.Equal(t, uuid.Nil, id)
+			},
+		}, {
+			name: "invalid email id",
+			buildReq: func(t *testing.T, req *hrm.CreateUserRequest) *hrm.CreateUserRequest {
+				other := &hrm.CreateUserRequest{}
+				err := copier.Copy(other, req)
+				require.NoError(t, err)
+
+				other.EmailId = "asdsa"
+				return other
+			},
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().CreateUser(gomock.Any(), gomock.Any()).
+					Times(0)
+
+			},
+			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
+				require.Error(t, err)
+			},
+		}, {
+			name: "Worst case",
+			buildReq: func(t *testing.T, req *hrm.CreateUserRequest) *hrm.CreateUserRequest {
+				other := &hrm.CreateUserRequest{}
+				err := copier.Copy(other, req)
+				require.NoError(t, err)
+
+				other.FirstName = ""
+				other.LastName = ""
+				other.UserName = ""
+				other.Password = ""
+				other.ContactNumber = 12
+				return other
+			},
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().CreateUser(gomock.Any(), gomock.All()).
+					Times(0).Return(uuid.Nil, errors.New("missing argument"))
+			},
+			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
+				require.Error(t, err)
+				id, err := uuid.Parse(res.GetId())
+				require.Error(t, err)
+				require.Equal(t, uuid.Nil, id)
 			},
 		},
 	}
@@ -62,27 +129,32 @@ func TestCreateUser(t *testing.T) {
 			defer ctrl.Finish()
 			store := mockdb.NewMockStore(ctrl)
 
+			// building stub for mock db
 			test.buildStub(store)
 
+			// create server and client for test
 			serverAddr := startTestServer(t, store)
 			client := createTestClient(t, serverAddr)
 
-			// create new user
-			res, err := client.CreateUser(context.Background(), test.req)
-			require.NoError(t, err)
-			require.NotNil(t, res)
+			// get test request
+			req := test.buildReq(t, reqStub)
 
-			test.checkresponse(t, res)
+			// create new user
+			res, err := client.CreateUser(context.Background(), req)
+			// checking for valid response by test
+			test.checkresponse(t, res, err)
 		})
 	}
 
 }
 
+/*
+	Table drive test for FindUser RPC
+*/
 func TestFindUserByName(t *testing.T) {
 	t.Parallel()
 
 	userName := utils.RandomName()
-
 	user := db.User{
 		ID:             uuid.New(),
 		FirstName:      utils.RandomName(),
@@ -96,27 +168,76 @@ func TestFindUserByName(t *testing.T) {
 		UpdatedAt:      time.Now(),
 	}
 
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	store := mockdb.NewMockStore(ctrl)
+	testcase := []struct {
+		name          string
+		username      string
+		buildStub     func(store *mockdb.MockStore)
+		checkresponse func(t *testing.T, res *hrm.FindUserResponse, err error)
+	}{
+		{
+			name:     "Best Case",
+			username: user.UserName,
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().FindUserByName(gomock.Any(), gomock.All()).Times(1).Return(user, nil)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindUserResponse, err error) {
+				require.NoError(t, err)
+				require.NotNil(t, res)
+				require.NotEqual(t, res.User.Id, uuid.Nil.String())
+				require.NotZero(t, res.User.Createdat)
+			},
+		}, {
+			name:     "Username not found",
+			username: "does not exisits",
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().FindUserByName(gomock.Any(), gomock.All()).Times(1).Return(db.User{}, sql.ErrNoRows)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindUserResponse, err error) {
+				require.Error(t, err, sql.ErrNoRows)
+				require.Nil(t, res)
+			},
+		}, {
 
-	store.EXPECT().FindUserByName(gomock.Any(), gomock.All()).Times(1).Return(user, nil)
-
-	serverAddr := startTestServer(t, store)
-	client := createTestClient(t, serverAddr)
-
-	arg := &hrm.FindUserRequest{
-		UserName: userName,
+			name:     "invalid username",
+			username: "",
+			buildStub: func(store *mockdb.MockStore) {
+				store.EXPECT().FindUserByName(gomock.Any(), gomock.All()).Times(0)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindUserResponse, err error) {
+				require.Error(t, err)
+			},
+		},
 	}
-	res, err := client.FindUser(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotNil(t, res)
 
-	require.NotEqual(t, res.User.Id, uuid.Nil.String())
-	require.NotZero(t, res.User.Createdat)
+	for i := range testcase {
+		test := testcase[i]
+
+		t.Run(test.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			store := mockdb.NewMockStore(ctrl)
+
+			// create server and client for test
+			serverAddr := startTestServer(t, store)
+			client := createTestClient(t, serverAddr)
+
+			// building stub for mock db
+			test.buildStub(store)
+
+			arg := &hrm.FindUserRequest{
+				UserName: test.username,
+			}
+			res, err := client.FindUser(context.Background(), arg)
+			// checking for valid response by test
+			test.checkresponse(t, res, err)
+
+		})
+
+	}
 
 }
 
+// Helper function start a test server
 func startTestServer(t *testing.T, store db.Store) string {
 
 	server := user.NewUserServer(store, hclog.Default())
@@ -132,6 +253,7 @@ func startTestServer(t *testing.T, store db.Store) string {
 	return listener.Addr().String()
 }
 
+// Helper function create a client
 func createTestClient(t *testing.T, serverAddress string) hrm.UserServiceClient {
 	// connect to grpc server, insecure is used for testing
 	conn, err := grpc.Dial(serverAddress, grpc.WithInsecure())
