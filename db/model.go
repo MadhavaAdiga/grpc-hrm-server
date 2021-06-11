@@ -37,3 +37,15 @@ type Organization struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type Role struct {
+	ID           uuid.UUID
+	Name         string
+	Active       bool
+	Organization uuid.UUID // foreign key
+	Permissions  []int32
+	CreatedBy    uuid.UUID // admin id
+	UpdatedBy    uuid.UUID // user id
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}

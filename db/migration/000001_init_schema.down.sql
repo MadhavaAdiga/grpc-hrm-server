@@ -1,2 +1,4 @@
+ALTER TABLE IF EXISTS roles DROP CONSTRAINT IF EXISTS "roles_organization_fkey";
+
 DROP TABLE IF EXISTS organizations;
 DROP TABLE IF EXISTS users;

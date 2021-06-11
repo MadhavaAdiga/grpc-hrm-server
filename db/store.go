@@ -14,6 +14,7 @@ type Store interface {
 	FindOrganizationByName(ctx context.Context, name string) (Organization, error)
 	CreateUser(ctx context.Context, arg CreateUserParam) (uuid.UUID, error)
 	FindUserByName(ctx context.Context, userName string) (User, error)
+	CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error)
 }
 
 // A compile time check to make sure Oueries implements Querier

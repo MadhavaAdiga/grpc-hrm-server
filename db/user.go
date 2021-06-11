@@ -6,6 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
+/*
+	User DB service
+	Provides abstraction for -
+	CREATE,FIND
+*/
+
 const createUser = `
 	INSERT INTO users (
 		first_name,

@@ -4,6 +4,12 @@ import (
 	"context"
 )
 
+/*
+	Organization DB service
+	Provides abstraction for -
+	CREATE,FIND
+*/
+
 const createOrganization = `
 	INSERT INTO organizations (
 		name,
