@@ -31,7 +31,6 @@ func NewOrganizationServer(store db.Store, l hclog.Logger) hrm.OrganizationServi
 func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *hrm.CreateOrganizationRequest) (*hrm.CreateOrganizationResponse, error) {
 	// name of organization
 	title := req.GetName()
-	creatorID := req.GetCreatorId()
 
 	// check for valid title
 	if len(title) < 0 {
@@ -40,7 +39,7 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 	}
 
 	// check for a valid uuid
-	_, err := uuid.Parse(creatorID)
+	creatorID, err := uuid.Parse(req.GetCreatorId())
 	if err != nil {
 		server.log.Info("invalid uuid", "error", err)
 		return nil, status.Errorf(codes.InvalidArgument, "creator id is not a valid uuid: %v", err)

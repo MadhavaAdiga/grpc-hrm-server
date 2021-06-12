@@ -12,5 +12,6 @@ CREATE TABLE "roles" (
 
 CREATE INDEX ON "roles" ("name");
 CREATE INDEX ON "roles" ("organization");
+CREATE INDEX ON "roles" ("name","organization");
 
 ALTER TABLE "roles" ADD FOREIGN KEY ("organization") REFERENCES "organizations" ("id");

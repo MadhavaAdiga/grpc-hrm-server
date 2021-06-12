@@ -42,3 +42,27 @@ func (store *SQLStore) CreateRole(ctx context.Context, arg CreateRoleParam) (uui
 
 	return id, err
 }
+
+const findRoleByOrganization = `
+	SELECT * FROM roles 
+	WHERE name =$1 AND organization =$2 
+	LIMIT 1
+`
+
+type FindRoleByOrgParam struct {
+	Name         string
+	Organization uuid.UUID
+}
+
+func (store *SQLStore) FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error) {
+	row := store.db.QueryRowContext(ctx, findRoleByOrganization, arg.Name, arg.Organization)
+
+	var r Role
+
+	err := row.Scan(
+		r.ID, r.Name, r.Active, r.Organization, r.Permissions,
+		r.CreatedBy, r.UpdatedBy, r.CreatedAt, r.UpdatedAt,
+	)
+
+	return r, err
+}

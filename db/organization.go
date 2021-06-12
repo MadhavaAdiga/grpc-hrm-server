@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 /*
@@ -26,7 +28,7 @@ const createOrganization = `
 type CreateOrganizationParam struct {
 	Name      string
 	CreatedBy string
-	CreatorID string
+	CreatorID uuid.UUID
 	Status    uint16
 }
 

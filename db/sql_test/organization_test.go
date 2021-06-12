@@ -37,7 +37,7 @@ func createOrganization(t *testing.T) db.Organization {
 		Name:      utils.RandomName(),
 		CreatedBy: utils.RandomName(),
 		Status:    0,
-		CreatorID: uuid.New().String(),
+		CreatorID: uuid.New(),
 	}
 
 	organization, err := testSQLStore.CreateOrganization(context.Background(), arg)
@@ -50,7 +50,7 @@ func createOrganization(t *testing.T) db.Organization {
 	require.Equal(t, organization.Name, arg.Name)
 	require.Equal(t, organization.Status, arg.Status)
 	require.Equal(t, organization.CreatedBy, arg.CreatedBy)
-	require.Equal(t, organization.CreatorID.String(), arg.CreatorID)
+	require.Equal(t, organization.CreatorID, arg.CreatorID)
 
 	require.NotZero(t, organization.CreatedAt)
 
