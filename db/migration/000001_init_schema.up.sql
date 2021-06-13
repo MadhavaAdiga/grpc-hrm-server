@@ -13,6 +13,7 @@ CREATE TABLE "users" (
     "address" varchar,
     "email" varchar,
     "contact_number" bigint UNIQUE NOT NULL,
+    "employee_id" uuid,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
     "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -20,14 +21,13 @@ CREATE TABLE "users" (
 CREATE TABLE "organizations" (
     "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     "name" varchar NOT NULL,
-    "created_by" varchar NOT NULL,
     "creator_id" uuid NOT NULL,
-    "status" integer NOT NUll,
-    "updated_by" varchar,
-    "updater_id" uuid,
+    "status" smallint NOT NUll,
+    "updater_id" uuid NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
     "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE UNIQUE INDEX ON "organizations" ("name");
 CREATE UNIQUE INDEX ON "users" ("user_name");
+CREATE UNIQUE INDEX ON "users" ("employee_id");

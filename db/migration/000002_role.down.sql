@@ -1,1 +1,3 @@
+ALTER TABLE IF EXISTS employees DROP CONSTRAINT IF EXISTS "employees_role_fkey";
+
 DROP TABLE IF EXISTS roles;

@@ -48,9 +48,9 @@ func TestFindOrganization(t *testing.T) {
 	t.Parallel()
 
 	org := db.Organization{
-		ID:        uuid.New(),
-		Name:      utils.RandomName(),
-		CreatedBy: utils.RandomName(),
+		ID:   uuid.New(),
+		Name: utils.RandomName(),
+		// CreatedBy: utils.RandomName(),
 		Status:    0,
 		CreatorID: uuid.New(),
 	}

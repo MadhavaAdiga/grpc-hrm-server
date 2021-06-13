@@ -5,7 +5,6 @@ import (
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
-	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
 	"github.com/lib/pq"
@@ -48,8 +47,8 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 	// todo check if its a valid cretor id by checking in db
 
 	arg := db.CreateOrganizationParam{
-		Name:      title,
-		CreatedBy: utils.RandomName(),
+		Name: title,
+		// CreatedBy: utils.RandomName(),
 		CreatorID: creatorID,
 		Status:    uint16(hrm.Organization_ACTIVE),
 	}
@@ -89,12 +88,12 @@ func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm
 
 	// map db.Organization to protobuf organization message
 	o := &hrm.Organization{
-		Id:        organization.ID.String(),
-		CreatedBy: organization.CreatedBy,
+		Id: organization.ID.String(),
+		// CreatedBy: organization.CreatedBy,
 		CreatorId: organization.CreatorID.String(),
 		Name:      organization.Name,
 		Status:    hrm.Organization_Status(organization.Status),
-		UpdatedBy: organization.UpdatedBy,
+		// UpdatedBy: organization.UpdatedBy,
 		UpdaterId: organization.UpdaterID.String(),
 		CreatedAt: timestamppb.New(organization.CreatedAt),
 		UpdatedAt: timestamppb.New(organization.UpdatedAt),

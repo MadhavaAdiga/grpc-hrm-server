@@ -60,7 +60,7 @@ func (store *SQLStore) FindUserByName(ctx context.Context, userName string) (Use
 
 	err := row.Scan(
 		&u.ID, &u.FirstName, &u.LastName, &u.UserName, &u.HashedPassword,
-		&u.Address, &u.Email, &u.ContactNumber, &u.CreatedAt, &u.UpdatedAt,
+		&u.Address, &u.Email, &u.ContactNumber, &u.Employee_id, &u.CreatedAt, &u.UpdatedAt,
 	)
 
 	return u, err

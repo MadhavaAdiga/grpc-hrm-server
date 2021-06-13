@@ -25,7 +25,7 @@ func TestFindOrganization(t *testing.T) {
 
 	require.Equal(t, organization1.Name, organization2.Name)
 	require.Equal(t, organization1.Status, organization2.Status)
-	require.Equal(t, organization1.CreatedBy, organization2.CreatedBy)
+	// require.Equal(t, organization1.CreatedBy, organization2.CreatedBy)
 	require.Equal(t, organization1.CreatorID, organization2.CreatorID)
 
 	require.Equal(t, organization1.CreatedAt, organization2.CreatedAt)
@@ -34,8 +34,8 @@ func TestFindOrganization(t *testing.T) {
 
 func createOrganization(t *testing.T) db.Organization {
 	arg := db.CreateOrganizationParam{
-		Name:      utils.RandomName(),
-		CreatedBy: utils.RandomName(),
+		Name: utils.RandomName(),
+		// CreatedBy: utils.RandomName(),
 		Status:    0,
 		CreatorID: uuid.New(),
 	}
@@ -49,7 +49,7 @@ func createOrganization(t *testing.T) db.Organization {
 
 	require.Equal(t, organization.Name, arg.Name)
 	require.Equal(t, organization.Status, arg.Status)
-	require.Equal(t, organization.CreatedBy, arg.CreatedBy)
+	// require.Equal(t, organization.CreatedBy, arg.CreatedBy)
 	require.Equal(t, organization.CreatorID, arg.CreatorID)
 
 	require.NotZero(t, organization.CreatedAt)

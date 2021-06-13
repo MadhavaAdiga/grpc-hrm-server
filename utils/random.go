@@ -31,11 +31,11 @@ func RandomName() string {
 	return RandomString(8)
 }
 
-func RandomInt(min, max int64) int64 {
-	return min + rand.Int63n(max-min+1)
+func RandomInt(min, max int32) int32 {
+	return min + rand.Int31n(max-min+1)
 }
 
-func RandomContactNum() int {
+func RandomContactNum() int32 {
 	var builder strings.Builder
 
 	for i := 11; i != 0; i-- {
@@ -50,5 +50,5 @@ func RandomContactNum() int {
 		return -1
 	}
 
-	return val
+	return int32(val)
 }

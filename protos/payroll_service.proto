@@ -19,9 +19,12 @@ message PayrollResponse{
 message UpdatePayrollRequest {
     string username = 1;
     // ctc
-    int32 yearly = 2;
+    oneof ctc{
+        int32 yearly = 2;
+        int32 monthly = 3;
+    }
     // username
-    string updated_by = 3;
+    string updated_by = 4;
 }
 
 message FindEmployeePayrollRequest { string username = 1; }

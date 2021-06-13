@@ -21,6 +21,7 @@ type User struct {
 	Address        string
 	Email          string
 	ContactNumber  uint32
+	Employee_id    uuid.UUID
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
@@ -29,10 +30,8 @@ type User struct {
 type Organization struct {
 	ID        uuid.UUID // organization id
 	Name      string    // organization title
-	CreatedBy string    // Admin name
 	CreatorID uuid.UUID
 	Status    uint16 // state of organization
-	UpdatedBy string // Admin name
 	UpdaterID uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
