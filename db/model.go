@@ -11,7 +11,7 @@ Model package is a database entity model used to store/retrive data from
 database only
 */
 
-// User table entity
+// users table entity
 type User struct {
 	ID             uuid.UUID
 	FirstName      string
@@ -26,7 +26,7 @@ type User struct {
 	UpdatedAt      time.Time
 }
 
-// An organization table entity
+// organizations table entity
 type Organization struct {
 	ID        uuid.UUID // organization id
 	Name      string    // organization title
@@ -37,6 +37,7 @@ type Organization struct {
 	UpdatedAt time.Time
 }
 
+// roel table entity
 type Role struct {
 	ID           uuid.UUID
 	Name         string
@@ -47,4 +48,31 @@ type Role struct {
 	UpdatedBy    uuid.UUID // user id
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+}
+
+// employees table entity
+type Employee struct {
+	Id           uuid.UUID
+	Organization uuid.UUID
+	Role         uuid.UUID
+	Status       int16
+	Payroll      uuid.UUID
+	Create_by    uuid.UUID
+	Updated_by   uuid.UUID
+	Created_at   time.Time
+	Updated_at   time.Time
+}
+
+// payrolls table entity
+type Payroll struct {
+	Id         uuid.UUID
+	Employee   uuid.UUID
+	Monthly    int32
+	Yearly     int32
+	Allowance  int32
+	Deduction  int32
+	Create_by  uuid.UUID
+	Updated_by uuid.UUID
+	Created_at time.Time
+	Updated_at time.Time
 }

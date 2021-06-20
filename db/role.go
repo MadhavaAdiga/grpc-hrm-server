@@ -10,7 +10,7 @@ import (
 /*
 	Role DB service
 	Provides abstraction for -
-	CREATE,FIND
+		CREATE,FIND
 */
 
 const createRole = `

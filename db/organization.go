@@ -9,7 +9,7 @@ import (
 /*
 	Organization DB service
 	Provides abstraction for -
-	CREATE,FIND
+		CREATE,FIND
 */
 
 const createOrganization = `

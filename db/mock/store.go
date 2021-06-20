@@ -36,6 +36,21 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
+// CreateEmployee mocks base method.
+func (m *MockStore) CreateEmployee(arg0 context.Context, arg1 db.CreateEmployeeParam) (uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateEmployee", arg0, arg1)
+	ret0, _ := ret[0].(uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateEmployee indicates an expected call of CreateEmployee.
+func (mr *MockStoreMockRecorder) CreateEmployee(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEmployee", reflect.TypeOf((*MockStore)(nil).CreateEmployee), arg0, arg1)
+}
+
 // CreateOrganization mocks base method.
 func (m *MockStore) CreateOrganization(arg0 context.Context, arg1 db.CreateOrganizationParam) (db.Organization, error) {
 	m.ctrl.T.Helper()
