@@ -37,12 +37,12 @@ type Organization struct {
 	UpdatedAt time.Time
 }
 
-// roel table entity
+// role table entity
 type Role struct {
 	ID           uuid.UUID
 	Name         string
 	Active       bool
-	Organization uuid.UUID // foreign key
+	Organization Organization // foreign key
 	Permissions  []int32
 	CreatedBy    uuid.UUID // admin id
 	UpdatedBy    uuid.UUID // user id
@@ -53,10 +53,10 @@ type Role struct {
 // employees table entity
 type Employee struct {
 	Id           uuid.UUID
-	Organization uuid.UUID
-	Role         uuid.UUID
+	User         User
+	Organization Organization
+	Role         Role
 	Status       int16
-	Payroll      uuid.UUID
 	Create_by    uuid.UUID
 	Updated_by   uuid.UUID
 	Created_at   time.Time
@@ -66,11 +66,9 @@ type Employee struct {
 // payrolls table entity
 type Payroll struct {
 	Id         uuid.UUID
-	Employee   uuid.UUID
-	Monthly    int32
-	Yearly     int32
+	Employee   Employee
+	Ctc        int32
 	Allowance  int32
-	Deduction  int32
 	Create_by  uuid.UUID
 	Updated_by uuid.UUID
 	Created_at time.Time

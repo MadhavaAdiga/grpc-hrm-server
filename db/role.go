@@ -60,7 +60,7 @@ func (store *SQLStore) FindRoleByOrganization(ctx context.Context, arg FindRoleB
 	var r Role
 
 	err := row.Scan(
-		r.ID, r.Name, r.Active, r.Organization, r.Permissions,
+		r.ID, r.Name, r.Active, r.Organization.ID, r.Permissions,
 		r.CreatedBy, r.UpdatedBy, r.CreatedAt, r.UpdatedAt,
 	)
 

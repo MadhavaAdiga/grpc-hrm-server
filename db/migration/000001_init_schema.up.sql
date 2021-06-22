@@ -13,7 +13,6 @@ CREATE TABLE "users" (
     "address" varchar,
     "email" varchar,
     "contact_number" bigint UNIQUE NOT NULL,
-    "employee_id" uuid,
     "created_at" timestamptz NOT NULL DEFAULT (now()),
     "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -30,4 +29,3 @@ CREATE TABLE "organizations" (
 
 CREATE UNIQUE INDEX ON "organizations" ("name");
 CREATE UNIQUE INDEX ON "users" ("user_name");
-CREATE UNIQUE INDEX ON "users" ("employee_id");

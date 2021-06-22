@@ -13,6 +13,8 @@ const createEmployee = `
 		role         
 		status     
 		create_by    
+	) VALUES(
+		$1,$2,$3,$4,$5,$6
 	) RETURNING id;
 `
 
@@ -36,23 +38,36 @@ func (store *SQLStore) CreateEmployee(ctx context.Context, arg CreateEmployeePar
 	return id, err
 }
 
-/*
-SELECT e.id, e."user", e.organization, e."role", e.status, e.payroll, e.create_by, e.updated_by, e.created_at, e.updated_at
+const findEmployeeUnameAndOrg = `
+	EXPLAIN ANALYZE SELECT e.id, e."user",u.user_name, e.organization,o."name", e."role",r."name", e.status, e.create_by
 	FROM employees e
-	LEFT JOIN users u  ON e."user" = u.id
+	INNER JOIN users u  ON e."user" = u.id  
 	LEFT JOIN roles r ON  e."role" = r.id
-	WHERE u.user_name = $1 AND  r."name" = $1;
-*/
-// const findEmployeeByUserNameAndRole = `
-// 	SELECT e.id, e."user", e.organization, e."role", e.status, e.payroll, e.create_by, e.updated_by, e.created_at, e.updated_at
-// 	FROM employees e
-// 	LEFT JOIN users u  ON e."user" = u.id
-// 	LEFT JOIN roles r ON  e."role" = r.id
-// 	WHERE u.user_name = $1
-// 	AND  r."name" = $2;
-// `
+	JOIN organizations o ON o."name" =$1
+	WHERE u.user_name = $2;
+`
 
-// type FindEmployeeByUnameAndRole struct {
-// 	Username string
-// 	role     string
-// }
+type FindEmployeeUnameAndOrgParam struct {
+	OrganizationName string
+	Username         string
+}
+
+func (store *SQLStore) FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEmployeeUnameAndOrgParam) (Employee, error) {
+	row := store.db.QueryRowContext(ctx, findEmployeeUnameAndOrg, arg.OrganizationName, arg.Username)
+
+	var e Employee
+
+	err := row.Scan(
+		&e.Id,
+		&e.User.ID,
+		&e.User.UserName,
+		&e.Organization.ID,
+		&e.Organization.Name,
+		&e.Role.ID,
+		&e.Role.Name,
+		&e.Status,
+		&e.Create_by,
+	)
+
+	return e, err
+}

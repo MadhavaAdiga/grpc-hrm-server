@@ -17,6 +17,7 @@ type Store interface {
 	CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error)
 	FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error)
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (uuid.UUID, error)
+	FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEmployeeUnameAndOrgParam) (Employee, error)
 }
 
 // A compile time check to make sure Oueries implements Querier
