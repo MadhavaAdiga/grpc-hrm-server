@@ -18,7 +18,7 @@ type Store interface {
 	FindUserByName(ctx context.Context, userName string) (User, error)
 	// roles
 	CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error)
-	FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error)
+	FindRoleByOrganizationID(ctx context.Context, arg FindRoleByOrgIDParam) (Role, error)
 	FindRoleByOrganizationName(ctx context.Context, arg FindRoleByOrgNameParam) (Role, error)
 	// employees
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (uuid.UUID, error)

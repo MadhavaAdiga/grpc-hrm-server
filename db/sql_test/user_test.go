@@ -11,6 +11,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
+	t.Parallel()
 	arg := db.CreateUserParam{
 		FirstName:      utils.RandomName(),
 		LastName:       utils.RandomName(),
@@ -24,6 +25,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestFindUserByName(t *testing.T) {
+	t.Parallel()
 	arg := db.CreateUserParam{
 		FirstName:      utils.RandomName(),
 		LastName:       utils.RandomName(),

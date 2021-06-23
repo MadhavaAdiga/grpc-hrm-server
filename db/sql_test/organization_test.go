@@ -11,10 +11,12 @@ import (
 )
 
 func TestCreateOrganization(t *testing.T) {
+	t.Parallel()
 	createOrganization(t)
 }
 
 func TestFindOrganization(t *testing.T) {
+	t.Parallel()
 	organization1 := createOrganization(t)
 
 	organization2, err := testSQLStore.FindOrganizationByName(context.Background(), organization1.Name)

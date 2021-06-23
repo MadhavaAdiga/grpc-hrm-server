@@ -15,13 +15,14 @@ import (
 
 const createRole = `
 	INSERT INTO roles (
-		name         
-		active       
-		organization 
-		permissions  
-		createdBy    
+		"name",        
+		active,
+		organization,
+		"permissions ",
+		created_by,
+		updated_by    
 	) VALUES (
-		$1,$2,$3,$4,$5
+		$1,$2,$3,$4,$5,$6
 	) RETURNING id;
 `
 
@@ -34,7 +35,9 @@ type CreateRoleParam struct {
 }
 
 func (store *SQLStore) CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error) {
-	row := store.db.QueryRowContext(ctx, createRole, arg.Name, arg.Active, arg.Organization, pq.Array(arg.Permissions), arg.CreatedBy)
+	row := store.db.QueryRowContext(
+		ctx, createRole, arg.Name, arg.Active, arg.Organization, pq.Array(arg.Permissions), arg.CreatedBy, arg.CreatedBy,
+	)
 
 	var id uuid.UUID
 
@@ -43,25 +46,25 @@ func (store *SQLStore) CreateRole(ctx context.Context, arg CreateRoleParam) (uui
 	return id, err
 }
 
-const findRoleByOrganization = `
+const findRoleByOrganizationID = `
 	SELECT * FROM roles 
-	WHERE name =$1 AND organization =$2 
-	LIMIT 1
+	WHERE "name" =$1 AND "organization" =$2 
+	LIMIT 1;
 `
 
-type FindRoleByOrgParam struct {
+type FindRoleByOrgIDParam struct {
 	Name         string
 	Organization uuid.UUID
 }
 
-func (store *SQLStore) FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error) {
-	row := store.db.QueryRowContext(ctx, findRoleByOrganization, arg.Name, arg.Organization)
+func (store *SQLStore) FindRoleByOrganizationID(ctx context.Context, arg FindRoleByOrgIDParam) (Role, error) {
+	row := store.db.QueryRowContext(ctx, findRoleByOrganizationID, arg.Name, arg.Organization)
 
 	var r Role
 
 	err := row.Scan(
-		r.ID, r.Name, r.Active, r.Organization.ID, r.Permissions,
-		r.CreatedBy, r.UpdatedBy, r.CreatedAt, r.UpdatedAt,
+		&r.ID, &r.Name, &r.Active, &r.Organization.ID, pq.Array(&r.Permissions),
+		&r.CreatedBy, &r.UpdatedBy, &r.CreatedAt, &r.UpdatedAt,
 	)
 
 	return r, err
@@ -69,7 +72,7 @@ func (store *SQLStore) FindRoleByOrganization(ctx context.Context, arg FindRoleB
 
 const findRoleByOrganizationName = `
 	SELECT * FROM roles 
-	WHERE name =$1 AND organization = (SELECT id FROM organizations WHERE name = $2) 
+	WHERE "name" =$1 AND "organization" = (SELECT id FROM organizations WHERE "name" = $2) 
 	LIMIT 1;
 `
 
@@ -84,8 +87,8 @@ func (store *SQLStore) FindRoleByOrganizationName(ctx context.Context, arg FindR
 	var r Role
 
 	err := row.Scan(
-		r.ID, r.Name, r.Active, r.Organization.ID, r.Permissions,
-		r.CreatedBy, r.UpdatedBy, r.CreatedAt, r.UpdatedAt,
+		&r.ID, &r.Name, &r.Active, &r.Organization.ID, pq.Array(&r.Permissions),
+		&r.CreatedBy, &r.UpdatedBy, &r.CreatedAt, &r.UpdatedAt,
 	)
 
 	return r, err
