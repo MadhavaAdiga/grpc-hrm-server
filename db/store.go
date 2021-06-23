@@ -10,14 +10,22 @@ import (
 // defines set of method to be implemented by different stores
 // interface holding different database queries to be performed
 type Store interface {
+	// organizations
 	CreateOrganization(ctx context.Context, param CreateOrganizationParam) (Organization, error)
 	FindOrganizationByName(ctx context.Context, name string) (Organization, error)
+	// users
 	CreateUser(ctx context.Context, arg CreateUserParam) (uuid.UUID, error)
 	FindUserByName(ctx context.Context, userName string) (User, error)
+	// roles
 	CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error)
 	FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error)
+	FindRoleByOrganizationName(ctx context.Context, arg FindRoleByOrgNameParam) (Role, error)
+	// employees
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (uuid.UUID, error)
 	FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEmployeeUnameAndOrgParam) (Employee, error)
+	// payrolls
+	CreatePayroll(ctx context.Context, arg CreatePayrollParam) (uuid.UUID, error)
+	FindPayroll(ctx context.Context, id uuid.UUID) (Payroll, error)
 }
 
 // A compile time check to make sure Oueries implements Querier

@@ -27,7 +27,11 @@ message UpdatePayrollRequest {
     string updated_by = 4;
 }
 
-message FindEmployeePayrollRequest { string username = 1; }
+
+message FindEmployeePayrollRequest { 
+    // employee id
+    string id = 1; 
+}
 message FindEmployeePayrollResponse { Payroll payroll = 1; }
 
 

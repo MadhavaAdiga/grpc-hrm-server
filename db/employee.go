@@ -41,7 +41,7 @@ func (store *SQLStore) CreateEmployee(ctx context.Context, arg CreateEmployeePar
 const findEmployeeUnameAndOrg = `
 	EXPLAIN ANALYZE SELECT e.id, e."user",u.user_name, e.organization,o."name", e."role",r."name", e.status, e.create_by
 	FROM employees e
-	INNER JOIN users u  ON e."user" = u.id  
+	JOIN users u  ON e."user" = u.id  
 	LEFT JOIN roles r ON  e."role" = r.id
 	JOIN organizations o ON o."name" =$1
 	WHERE u.user_name = $2;

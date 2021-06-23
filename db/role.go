@@ -22,7 +22,7 @@ const createRole = `
 		createdBy    
 	) VALUES (
 		$1,$2,$3,$4,$5
-	) RETURNING id
+	) RETURNING id;
 `
 
 type CreateRoleParam struct {
@@ -56,6 +56,30 @@ type FindRoleByOrgParam struct {
 
 func (store *SQLStore) FindRoleByOrganization(ctx context.Context, arg FindRoleByOrgParam) (Role, error) {
 	row := store.db.QueryRowContext(ctx, findRoleByOrganization, arg.Name, arg.Organization)
+
+	var r Role
+
+	err := row.Scan(
+		r.ID, r.Name, r.Active, r.Organization.ID, r.Permissions,
+		r.CreatedBy, r.UpdatedBy, r.CreatedAt, r.UpdatedAt,
+	)
+
+	return r, err
+}
+
+const findRoleByOrganizationName = `
+	SELECT * FROM roles 
+	WHERE name =$1 AND organization = (SELECT id FROM organizations WHERE name = $2) 
+	LIMIT 1;
+`
+
+type FindRoleByOrgNameParam struct {
+	Name             string
+	OrganizationName string
+}
+
+func (store *SQLStore) FindRoleByOrganizationName(ctx context.Context, arg FindRoleByOrgNameParam) (Role, error) {
+	row := store.db.QueryRowContext(ctx, findRoleByOrganizationName, arg.Name, arg.OrganizationName)
 
 	var r Role
 

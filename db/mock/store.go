@@ -66,6 +66,21 @@ func (mr *MockStoreMockRecorder) CreateOrganization(arg0, arg1 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrganization", reflect.TypeOf((*MockStore)(nil).CreateOrganization), arg0, arg1)
 }
 
+// CreatePayroll mocks base method.
+func (m *MockStore) CreatePayroll(arg0 context.Context, arg1 db.CreatePayrollParam) (uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePayroll", arg0, arg1)
+	ret0, _ := ret[0].(uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreatePayroll indicates an expected call of CreatePayroll.
+func (mr *MockStoreMockRecorder) CreatePayroll(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePayroll", reflect.TypeOf((*MockStore)(nil).CreatePayroll), arg0, arg1)
+}
+
 // CreateRole mocks base method.
 func (m *MockStore) CreateRole(arg0 context.Context, arg1 db.CreateRoleParam) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
@@ -126,6 +141,21 @@ func (mr *MockStoreMockRecorder) FindOrganizationByName(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOrganizationByName", reflect.TypeOf((*MockStore)(nil).FindOrganizationByName), arg0, arg1)
 }
 
+// FindPayroll mocks base method.
+func (m *MockStore) FindPayroll(arg0 context.Context, arg1 uuid.UUID) (db.Payroll, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindPayroll", arg0, arg1)
+	ret0, _ := ret[0].(db.Payroll)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindPayroll indicates an expected call of FindPayroll.
+func (mr *MockStoreMockRecorder) FindPayroll(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayroll", reflect.TypeOf((*MockStore)(nil).FindPayroll), arg0, arg1)
+}
+
 // FindRoleByOrganization mocks base method.
 func (m *MockStore) FindRoleByOrganization(arg0 context.Context, arg1 db.FindRoleByOrgParam) (db.Role, error) {
 	m.ctrl.T.Helper()
@@ -139,6 +169,21 @@ func (m *MockStore) FindRoleByOrganization(arg0 context.Context, arg1 db.FindRol
 func (mr *MockStoreMockRecorder) FindRoleByOrganization(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRoleByOrganization", reflect.TypeOf((*MockStore)(nil).FindRoleByOrganization), arg0, arg1)
+}
+
+// FindRoleByOrganizationName mocks base method.
+func (m *MockStore) FindRoleByOrganizationName(arg0 context.Context, arg1 db.FindRoleByOrgNameParam) (db.Role, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindRoleByOrganizationName", arg0, arg1)
+	ret0, _ := ret[0].(db.Role)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindRoleByOrganizationName indicates an expected call of FindRoleByOrganizationName.
+func (mr *MockStoreMockRecorder) FindRoleByOrganizationName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRoleByOrganizationName", reflect.TypeOf((*MockStore)(nil).FindRoleByOrganizationName), arg0, arg1)
 }
 
 // FindUserByName mocks base method.

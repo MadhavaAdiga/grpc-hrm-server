@@ -20,7 +20,7 @@ const createOrganization = `
 		updater_id
 	) VALUES (
 		$1,$2,$3,$4
-	) RETURNING *
+	) RETURNING *;
 `
 
 type CreateOrganizationParam struct {
@@ -45,7 +45,7 @@ func (store *SQLStore) CreateOrganization(ctx context.Context, arg CreateOrganiz
 
 const findOrganization = `
 	SELECT * FROM organizations
-	WHERE name = $1 LIMIT 1
+	WHERE name = $1 LIMIT 1;
 `
 
 func (store *SQLStore) FindOrganizationByName(ctx context.Context, name string) (Organization, error) {

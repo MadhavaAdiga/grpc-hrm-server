@@ -23,7 +23,7 @@ const createUser = `
 		contact_number
 	) VALUES (
 		$1,$2,$3,$4,$5,$6,$7
-	) RETURNING id
+	) RETURNING id;
 `
 
 type CreateUserParam struct {
@@ -50,7 +50,7 @@ func (store *SQLStore) CreateUser(ctx context.Context, arg CreateUserParam) (uui
 
 const findUser = `
 	SELECT * FROM users
-	WHERE user_name = $1 LIMIT 1
+	WHERE user_name = $1 LIMIT 1;
 `
 
 func (store *SQLStore) FindUserByName(ctx context.Context, userName string) (User, error) {
