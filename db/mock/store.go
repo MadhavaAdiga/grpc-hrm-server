@@ -37,10 +37,10 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // CreateEmployee mocks base method.
-func (m *MockStore) CreateEmployee(arg0 context.Context, arg1 db.CreateEmployeeParam) (uuid.UUID, error) {
+func (m *MockStore) CreateEmployee(arg0 context.Context, arg1 db.CreateEmployeeParam) (db.Employee, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateEmployee", arg0, arg1)
-	ret0, _ := ret[0].(uuid.UUID)
+	ret0, _ := ret[0].(db.Employee)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -67,10 +67,10 @@ func (mr *MockStoreMockRecorder) CreateOrganization(arg0, arg1 interface{}) *gom
 }
 
 // CreatePayroll mocks base method.
-func (m *MockStore) CreatePayroll(arg0 context.Context, arg1 db.CreatePayrollParam) (uuid.UUID, error) {
+func (m *MockStore) CreatePayroll(arg0 context.Context, arg1 db.CreatePayrollParam) (db.Payroll, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePayroll", arg0, arg1)
-	ret0, _ := ret[0].(uuid.UUID)
+	ret0, _ := ret[0].(db.Payroll)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -82,10 +82,10 @@ func (mr *MockStoreMockRecorder) CreatePayroll(arg0, arg1 interface{}) *gomock.C
 }
 
 // CreateRole mocks base method.
-func (m *MockStore) CreateRole(arg0 context.Context, arg1 db.CreateRoleParam) (uuid.UUID, error) {
+func (m *MockStore) CreateRole(arg0 context.Context, arg1 db.CreateRoleParam) (db.Role, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateRole", arg0, arg1)
-	ret0, _ := ret[0].(uuid.UUID)
+	ret0, _ := ret[0].(db.Role)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -124,6 +124,21 @@ func (m *MockStore) FindEmployeeByUnameAndOrg(arg0 context.Context, arg1 db.Find
 func (mr *MockStoreMockRecorder) FindEmployeeByUnameAndOrg(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindEmployeeByUnameAndOrg", reflect.TypeOf((*MockStore)(nil).FindEmployeeByUnameAndOrg), arg0, arg1)
+}
+
+// FindOrganizationByID mocks base method.
+func (m *MockStore) FindOrganizationByID(arg0 context.Context, arg1 uuid.UUID) (db.Organization, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindOrganizationByID", arg0, arg1)
+	ret0, _ := ret[0].(db.Organization)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindOrganizationByID indicates an expected call of FindOrganizationByID.
+func (mr *MockStoreMockRecorder) FindOrganizationByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOrganizationByID", reflect.TypeOf((*MockStore)(nil).FindOrganizationByID), arg0, arg1)
 }
 
 // FindOrganizationByName mocks base method.

@@ -53,9 +53,22 @@ func TestFindUserByName(t *testing.T) {
 	require.NotZero(t, user.CreatedAt)
 }
 
-func createUser(t *testing.T, arg db.CreateUserParam) {
+func createUser(t *testing.T, arg db.CreateUserParam) uuid.UUID {
+	if arg.UserName == "" {
+		arg = db.CreateUserParam{
+			FirstName:      utils.RandomName(),
+			LastName:       utils.RandomName(),
+			HashedPassword: "secret",
+			UserName:       utils.RandomName(),
+			Address:        utils.RandomString(15),
+			Email:          utils.RandomString(4),
+			ContactNumber:  uint32(utils.RandomContactNum()),
+		}
+	}
 	id, err := testSQLStore.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, id)
 	require.NotEqual(t, id, uuid.Nil)
+
+	return id
 }

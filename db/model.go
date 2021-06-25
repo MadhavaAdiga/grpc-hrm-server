@@ -21,7 +21,6 @@ type User struct {
 	Address        string
 	Email          string
 	ContactNumber  uint32
-	Employee_id    uuid.UUID
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
@@ -52,25 +51,25 @@ type Role struct {
 
 // employees table entity
 type Employee struct {
-	Id           uuid.UUID
+	ID           uuid.UUID
 	User         User
 	Organization Organization
 	Role         Role
 	Status       int16
-	Create_by    uuid.UUID
-	Updated_by   uuid.UUID
-	Created_at   time.Time
-	Updated_at   time.Time
+	CreateBy     uuid.UUID
+	UpdatedBy    uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 // payrolls table entity
 type Payroll struct {
-	Id         uuid.UUID
-	Employee   Employee
-	Ctc        int32
-	Allowance  int32
-	Create_by  uuid.UUID
-	Updated_by uuid.UUID
-	Created_at time.Time
-	Updated_at time.Time
+	ID        uuid.UUID
+	Employee  Employee
+	Ctc       int32
+	Allowance int32
+	CreateBy  uuid.UUID
+	UpdatedBy uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

@@ -15,7 +15,7 @@ const createEmployee = `
 		create_by    
 	) VALUES(
 		$1,$2,$3,$4,$5,$6
-	) RETURNING id;
+	) RETURNING *;
 `
 
 type CreateEmployeeParam struct {
@@ -26,16 +26,25 @@ type CreateEmployeeParam struct {
 	CreatedBy       uuid.UUID
 }
 
-func (store *SQLStore) CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (uuid.UUID, error) {
+func (store *SQLStore) CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (Employee, error) {
 	row := store.db.QueryRowContext(
 		ctx, createEmployee, arg.User_id, arg.Organization_id, arg.Role_id, arg.Status, arg.CreatedBy,
 	)
 
-	var id uuid.UUID
+	var e Employee
 
-	err := row.Scan(&id)
+	err := row.Scan(
+		&e.ID,
+		&e.Organization.ID,
+		&e.Role.ID,
+		&e.Status,
+		&e.CreateBy,
+		&e.UpdatedBy,
+		&e.CreatedAt,
+		&e.UpdatedAt,
+	)
 
-	return id, err
+	return e, err
 }
 
 const findEmployeeUnameAndOrg = `
@@ -58,7 +67,7 @@ func (store *SQLStore) FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEm
 	var e Employee
 
 	err := row.Scan(
-		&e.Id,
+		&e.ID,
 		&e.User.ID,
 		&e.User.UserName,
 		&e.Organization.ID,
@@ -66,7 +75,7 @@ func (store *SQLStore) FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEm
 		&e.Role.ID,
 		&e.Role.Name,
 		&e.Status,
-		&e.Create_by,
+		&e.CreateBy,
 	)
 
 	return e, err

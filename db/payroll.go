@@ -14,7 +14,7 @@ const createPayroll = `
 		create_by
 	) VALUES (
 		$1,$2,$3,$4
-	) RETURNING id;
+	) RETURNING *;
 `
 
 type CreatePayrollParam struct {
@@ -24,14 +24,23 @@ type CreatePayrollParam struct {
 	Created_by uuid.UUID
 }
 
-func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam) (uuid.UUID, error) {
+func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam) (Payroll, error) {
 	row := store.db.QueryRowContext(ctx, createPayroll, arg.Employee, arg.Ctc, arg.Allowance, arg.Created_by)
 
-	var id uuid.UUID
+	var p Payroll
 
-	err := row.Scan(&id)
+	err := row.Scan(
+		&p.ID,
+		&p.Employee.ID,
+		&p.Ctc,
+		&p.Allowance,
+		&p.CreateBy,
+		&p.UpdatedBy,
+		&p.CreatedAt,
+		&p.UpdatedAt,
+	)
 
-	return id, err
+	return p, err
 }
 
 const findPayroll = `
@@ -46,14 +55,14 @@ func (store *SQLStore) FindPayroll(ctx context.Context, id uuid.UUID) (Payroll, 
 	var p Payroll
 
 	err := row.Scan(
-		&p.Id,
-		&p.Employee.Id,
+		&p.ID,
+		&p.Employee.ID,
 		&p.Ctc,
 		&p.Allowance,
-		&p.Create_by,
-		&p.Updated_by,
-		&p.Created_at,
-		&p.Updated_at,
+		&p.CreateBy,
+		&p.UpdatedBy,
+		&p.CreatedAt,
+		&p.UpdatedAt,
 	)
 
 	return p, err

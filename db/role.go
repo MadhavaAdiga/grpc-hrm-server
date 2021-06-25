@@ -23,7 +23,7 @@ const createRole = `
 		updated_by    
 	) VALUES (
 		$1,$2,$3,$4,$5,$6
-	) RETURNING id;
+	) RETURNING *;
 `
 
 type CreateRoleParam struct {
@@ -34,16 +34,19 @@ type CreateRoleParam struct {
 	CreatedBy    uuid.UUID
 }
 
-func (store *SQLStore) CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error) {
+func (store *SQLStore) CreateRole(ctx context.Context, arg CreateRoleParam) (Role, error) {
 	row := store.db.QueryRowContext(
 		ctx, createRole, arg.Name, arg.Active, arg.Organization, pq.Array(arg.Permissions), arg.CreatedBy, arg.CreatedBy,
 	)
 
-	var id uuid.UUID
+	var r Role
 
-	err := row.Scan(&id)
+	err := row.Scan(
+		&r.ID, &r.Name, &r.Active, &r.Organization.ID, pq.Array(&r.Permissions),
+		&r.CreatedBy, &r.UpdatedBy, &r.CreatedAt, &r.UpdatedAt,
+	)
 
-	return id, err
+	return r, err
 }
 
 const findRoleByOrganizationID = `

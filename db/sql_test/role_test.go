@@ -13,59 +13,64 @@ import (
 
 func TestCreateRole(t *testing.T) {
 	t.Parallel()
-	org := createOrganization(t)
 
-	arg := db.CreateRoleParam{
-		Name:         utils.RandomName(),
-		Active:       true,
-		Organization: org.ID,
-		Permissions: []int32{
-			int32(hrm.Permission_ADMIN),
-		},
-		CreatedBy: uuid.New(),
-	}
-
-	createRole(t, arg)
+	createRole(t)
 }
 
 func TestFindRoleByNameAndOrg(t *testing.T) {
 	t.Parallel()
-	org := createOrganization(t)
 
-	arg := db.CreateRoleParam{
-		Name:         utils.RandomName(),
-		Active:       true,
-		Organization: org.ID,
-		Permissions: []int32{
-			int32(hrm.Permission_ADMIN),
-		},
-		CreatedBy: uuid.New(),
-	}
-
-	id := createRole(t, arg)
+	role := createRole(t)
 
 	findArg := db.FindRoleByOrgIDParam{
-		Name:         arg.Name,
-		Organization: org.ID,
+		Name:         role.Name,
+		Organization: role.Organization.ID,
 	}
 
-	role, err := testSQLStore.FindRoleByOrganizationID(context.Background(), findArg)
+	role1, err := testSQLStore.FindRoleByOrganizationID(context.Background(), findArg)
 	require.NoError(t, err)
-	require.NotEmpty(t, id)
-	require.NotEqual(t, role.ID, uuid.Nil)
+	require.NotEmpty(t, role1)
+	require.NotEqual(t, role1.ID, uuid.Nil)
 
-	require.Equal(t, role.ID, id)
-	require.Equal(t, role.Organization.ID, org.ID)
+	require.Equal(t, role.ID, role1.ID)
+	require.Equal(t, role.Organization.ID, role1.Organization.ID)
 	for i := range role.Permissions {
-		require.Equal(t, role.Permissions[i], arg.Permissions[i])
+		require.Equal(t, role.Permissions[i], role1.Permissions[i])
 	}
-	require.Equal(t, role.CreatedBy, arg.CreatedBy)
+	require.Equal(t, role.CreatedBy, role1.CreatedBy)
 
 	require.NotZero(t, role.CreatedAt)
 }
 
 func TestFindRoleByNameAndOrgName(t *testing.T) {
 	t.Parallel()
+
+	role := createRole(t)
+
+	org, err := testSQLStore.FindOrganizationByID(context.Background(), role.Organization.ID)
+	require.NoError(t, err)
+
+	findArg := db.FindRoleByOrgNameParam{
+		Name:             role.Name,
+		OrganizationName: org.Name,
+	}
+
+	role1, err := testSQLStore.FindRoleByOrganizationName(context.Background(), findArg)
+	require.NoError(t, err)
+	require.NotEmpty(t, role1)
+	require.NotEqual(t, role1.ID, uuid.Nil)
+
+	require.Equal(t, role.ID, role1.ID)
+	require.Equal(t, role.Organization.ID, role1.Organization.ID)
+	for i := range role.Permissions {
+		require.Equal(t, role.Permissions[i], role1.Permissions[i])
+	}
+	require.Equal(t, role.CreatedBy, role1.CreatedBy)
+
+	require.NotZero(t, role.CreatedAt)
+}
+
+func createRole(t *testing.T) db.Role {
 	org := createOrganization(t)
 
 	arg := db.CreateRoleParam{
@@ -78,19 +83,11 @@ func TestFindRoleByNameAndOrgName(t *testing.T) {
 		CreatedBy: uuid.New(),
 	}
 
-	id := createRole(t, arg)
-
-	findArg := db.FindRoleByOrgNameParam{
-		Name:             arg.Name,
-		OrganizationName: org.Name,
-	}
-
-	role, err := testSQLStore.FindRoleByOrganizationName(context.Background(), findArg)
+	role, err := testSQLStore.CreateRole(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, id)
+	require.NotEmpty(t, role)
 	require.NotEqual(t, role.ID, uuid.Nil)
 
-	require.Equal(t, role.ID, id)
 	require.Equal(t, role.Organization.ID, org.ID)
 	for i := range role.Permissions {
 		require.Equal(t, role.Permissions[i], arg.Permissions[i])
@@ -98,13 +95,6 @@ func TestFindRoleByNameAndOrgName(t *testing.T) {
 	require.Equal(t, role.CreatedBy, arg.CreatedBy)
 
 	require.NotZero(t, role.CreatedAt)
-}
 
-func createRole(t *testing.T, arg db.CreateRoleParam) uuid.UUID {
-	id, err := testSQLStore.CreateRole(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotEmpty(t, id)
-	require.NotEqual(t, id, uuid.Nil)
-
-	return id
+	return role
 }

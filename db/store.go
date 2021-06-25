@@ -13,18 +13,19 @@ type Store interface {
 	// organizations
 	CreateOrganization(ctx context.Context, param CreateOrganizationParam) (Organization, error)
 	FindOrganizationByName(ctx context.Context, name string) (Organization, error)
+	FindOrganizationByID(ctx context.Context, id uuid.UUID) (Organization, error)
 	// users
 	CreateUser(ctx context.Context, arg CreateUserParam) (uuid.UUID, error)
 	FindUserByName(ctx context.Context, userName string) (User, error)
 	// roles
-	CreateRole(ctx context.Context, arg CreateRoleParam) (uuid.UUID, error)
+	CreateRole(ctx context.Context, arg CreateRoleParam) (Role, error)
 	FindRoleByOrganizationID(ctx context.Context, arg FindRoleByOrgIDParam) (Role, error)
 	FindRoleByOrganizationName(ctx context.Context, arg FindRoleByOrgNameParam) (Role, error)
 	// employees
-	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (uuid.UUID, error)
+	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (Employee, error)
 	FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEmployeeUnameAndOrgParam) (Employee, error)
 	// payrolls
-	CreatePayroll(ctx context.Context, arg CreatePayrollParam) (uuid.UUID, error)
+	CreatePayroll(ctx context.Context, arg CreatePayrollParam) (Payroll, error)
 	FindPayroll(ctx context.Context, id uuid.UUID) (Payroll, error)
 }
 
