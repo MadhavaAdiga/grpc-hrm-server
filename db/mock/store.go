@@ -97,10 +97,10 @@ func (mr *MockStoreMockRecorder) CreateRole(arg0, arg1 interface{}) *gomock.Call
 }
 
 // CreateUser mocks base method.
-func (m *MockStore) CreateUser(arg0 context.Context, arg1 db.CreateUserParam) (uuid.UUID, error) {
+func (m *MockStore) CreateUser(arg0 context.Context, arg1 db.CreateUserParam) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", arg0, arg1)
-	ret0, _ := ret[0].(uuid.UUID)
+	ret0, _ := ret[0].(db.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

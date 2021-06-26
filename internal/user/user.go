@@ -86,7 +86,7 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 		ContactNumber:  req.GetContactNumber(),
 	}
 	// store to db
-	id, err := server.store.CreateUser(ctx, arg)
+	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
 		pqError, ok := err.(*pq.Error)
 		if ok {
@@ -102,7 +102,7 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 	}
 	// build response object
 	res := &hrm.CreateUserResponse{
-		Id: id.String(),
+		Id: user.ID.String(),
 	}
 
 	return res, nil

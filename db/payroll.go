@@ -8,24 +8,27 @@ import (
 
 const createPayroll = `
 	INSERT INTO payrolls (
-		employee
-		ctc
-		allowance
-		create_by
+		"employee",
+		ctc,
+		allowance,
+		create_by,
+		updated_by
 	) VALUES (
-		$1,$2,$3,$4
+		$1,$2,$3,$4,$5
 	) RETURNING *;
 `
 
 type CreatePayrollParam struct {
-	Employee
-	Ctc        int32
-	Allowance  int32
-	Created_by uuid.UUID
+	Employee  uuid.UUID
+	Ctc       int32
+	Allowance int32
+	CreatedBy uuid.UUID
 }
 
 func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam) (Payroll, error) {
-	row := store.db.QueryRowContext(ctx, createPayroll, arg.Employee, arg.Ctc, arg.Allowance, arg.Created_by)
+	row := store.db.QueryRowContext(
+		ctx, createPayroll, arg.Employee, arg.Ctc, arg.Allowance, arg.CreatedBy, arg.CreatedBy,
+	)
 
 	var p Payroll
 

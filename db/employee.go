@@ -8,33 +8,35 @@ import (
 
 const createEmployee = `
 	INSERT INTO employees (
-		user           
-		organization 
-		role         
-		status     
-		create_by    
-	) VALUES(
+		"user",           
+		"organization", 
+		"role",         
+		status,     
+		create_by,
+		updated_by    
+	) VALUES (
 		$1,$2,$3,$4,$5,$6
 	) RETURNING *;
 `
 
 type CreateEmployeeParam struct {
-	User_id         uuid.UUID
-	Organization_id uuid.UUID
-	Role_id         uuid.UUID
-	Status          int16
-	CreatedBy       uuid.UUID
+	UserId         uuid.UUID
+	OrganizationId uuid.UUID
+	RoleId         uuid.UUID
+	Status         int16
+	CreatedBy      uuid.UUID
 }
 
 func (store *SQLStore) CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (Employee, error) {
 	row := store.db.QueryRowContext(
-		ctx, createEmployee, arg.User_id, arg.Organization_id, arg.Role_id, arg.Status, arg.CreatedBy,
+		ctx, createEmployee, arg.UserId, arg.OrganizationId, arg.RoleId, arg.Status, arg.CreatedBy, arg.CreatedBy,
 	)
 
 	var e Employee
 
 	err := row.Scan(
 		&e.ID,
+		&e.User.ID,
 		&e.Organization.ID,
 		&e.Role.ID,
 		&e.Status,

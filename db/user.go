@@ -2,8 +2,6 @@ package db
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 /*
@@ -23,7 +21,7 @@ const createUser = `
 		contact_number
 	) VALUES (
 		$1,$2,$3,$4,$5,$6,$7
-	) RETURNING id;
+	) RETURNING *;
 `
 
 type CreateUserParam struct {
@@ -36,16 +34,18 @@ type CreateUserParam struct {
 	ContactNumber  uint32
 }
 
-func (store *SQLStore) CreateUser(ctx context.Context, arg CreateUserParam) (uuid.UUID, error) {
+func (store *SQLStore) CreateUser(ctx context.Context, arg CreateUserParam) (User, error) {
 	row := store.db.QueryRowContext(ctx, createUser, arg.FirstName, arg.LastName, arg.UserName,
 		arg.HashedPassword, arg.Address, arg.Email, arg.ContactNumber)
 
-	var id uuid.UUID
+	var u User
 
 	err := row.Scan(
-		&id,
+		&u.ID, &u.FirstName, &u.LastName, &u.UserName, &u.HashedPassword,
+		&u.Address, &u.Email, &u.ContactNumber, &u.CreatedAt, &u.UpdatedAt,
 	)
-	return id, err
+
+	return u, err
 }
 
 const findUser = `

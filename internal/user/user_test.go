@@ -27,16 +27,25 @@ import (
 func TestCreateUser(t *testing.T) {
 	t.Parallel()
 
-	usrId := uuid.New()
+	user := db.User{
+		ID:             uuid.New(),
+		FirstName:      utils.RandomName(),
+		LastName:       utils.RandomName(),
+		HashedPassword: "secret",
+		UserName:       utils.RandomName(),
+		Address:        utils.RandomString(15),
+		Email:          "abc@email.com",
+		ContactNumber:  1234567890,
+	}
 
 	reqStub := &hrm.CreateUserRequest{
-		FirstName:     utils.RandomName(),
-		LastName:      utils.RandomName(),
-		UserName:      utils.RandomName(),
-		Password:      "secret",
-		Address:       utils.RandomString(8),
-		EmailId:       "a@example.com",
-		ContactNumber: 1234567890,
+		FirstName:     user.UserName,
+		LastName:      user.LastName,
+		UserName:      user.UserName,
+		Password:      user.HashedPassword,
+		Address:       user.Address,
+		EmailId:       user.Email,
+		ContactNumber: user.ContactNumber,
 	}
 
 	testcase := []struct {
@@ -52,7 +61,7 @@ func TestCreateUser(t *testing.T) {
 			},
 			buildStub: func(store *mockdb.MockStore) {
 				store.EXPECT().CreateUser(gomock.Any(), gomock.Any()).
-					Times(1).Return(usrId, nil)
+					Times(1).Return(user, nil)
 			},
 			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
 				require.NoError(t, err)
@@ -67,7 +76,7 @@ func TestCreateUser(t *testing.T) {
 			},
 			buildStub: func(store *mockdb.MockStore) {
 				store.EXPECT().CreateUser(gomock.Any(), gomock.Any()).
-					Times(1).Return(uuid.Nil, sql.ErrNoRows)
+					Times(1).Return(db.User{}, sql.ErrNoRows)
 
 			},
 			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
@@ -110,7 +119,7 @@ func TestCreateUser(t *testing.T) {
 			},
 			buildStub: func(store *mockdb.MockStore) {
 				store.EXPECT().CreateUser(gomock.Any(), gomock.All()).
-					Times(0).Return(uuid.Nil, errors.New("missing argument"))
+					Times(0).Return(db.User{}, errors.New("missing argument"))
 			},
 			checkresponse: func(t *testing.T, res *hrm.CreateUserResponse, err error) {
 				require.Error(t, err)
