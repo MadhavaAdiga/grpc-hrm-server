@@ -6,6 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
+/*
+	Payroll DB service
+	Provides abstraction for -
+		CREATE,FIND
+*/
+
 const createPayroll = `
 	INSERT INTO payrolls (
 		"employee",
@@ -46,14 +52,14 @@ func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam
 	return p, err
 }
 
-const findPayroll = `
+const findPayrollByEmp = `
 	SELECT * FROM payrolls 
 	WHERE employee = $1
 	LIMIT 1;
 `
 
-func (store *SQLStore) FindPayroll(ctx context.Context, id uuid.UUID) (Payroll, error) {
-	row := store.db.QueryRowContext(ctx, findPayroll, id)
+func (store *SQLStore) FindPayrollByEmp(ctx context.Context, id uuid.UUID) (Payroll, error) {
+	row := store.db.QueryRowContext(ctx, findPayrollByEmp, id)
 
 	var p Payroll
 

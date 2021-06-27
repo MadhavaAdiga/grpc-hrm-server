@@ -37,6 +37,27 @@ func TestFindUserByName(t *testing.T) {
 	require.Equal(t, user.CreatedAt, user1.CreatedAt)
 }
 
+func TestFindUserById(t *testing.T) {
+	t.Parallel()
+
+	user := createUser(t)
+
+	user1, err := testSQLStore.FindUserById(context.Background(), user.ID)
+	require.NoError(t, err)
+	require.NotNil(t, user)
+
+	require.NotEqual(t, user.ID, uuid.Nil)
+
+	require.Equal(t, user.FirstName, user1.FirstName)
+	require.Equal(t, user.LastName, user1.LastName)
+	require.Equal(t, user.UserName, user1.UserName)
+	require.Equal(t, user.HashedPassword, user1.HashedPassword)
+	require.Equal(t, user.Address, user1.Address)
+	require.Equal(t, user.Email, user1.Email)
+	require.Equal(t, user.ContactNumber, user1.ContactNumber)
+	require.Equal(t, user.CreatedAt, user1.CreatedAt)
+}
+
 func createUser(t *testing.T) db.User {
 	arg := db.CreateUserParam{
 		FirstName:      utils.RandomName(),

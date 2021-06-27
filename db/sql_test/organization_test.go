@@ -34,6 +34,25 @@ func TestFindOrganization(t *testing.T) {
 	require.Equal(t, organization1.UpdatedAt, organization2.UpdatedAt)
 }
 
+func TestFindOrganizationById(t *testing.T) {
+	t.Parallel()
+	organization1 := createOrganization(t)
+
+	organization2, err := testSQLStore.FindOrganizationByID(context.Background(), organization1.ID)
+	require.NoError(t, err)
+	require.NotNil(t, organization2)
+
+	require.Equal(t, organization1.ID, organization2.ID)
+
+	require.Equal(t, organization1.Name, organization2.Name)
+	require.Equal(t, organization1.Status, organization2.Status)
+	// require.Equal(t, organization1.CreatedBy, organization2.CreatedBy)
+	require.Equal(t, organization1.CreatorID, organization2.CreatorID)
+
+	require.Equal(t, organization1.CreatedAt, organization2.CreatedAt)
+	require.Equal(t, organization1.UpdatedAt, organization2.UpdatedAt)
+}
+
 func createOrganization(t *testing.T) db.Organization {
 	arg := db.CreateOrganizationParam{
 		Name: utils.RandomName(),

@@ -7,8 +7,8 @@ import (
 )
 
 /*
-Model package is a database entity model used to store/retrive data from
-database only
+	Model package is a database entity model used to store/retrive data from
+	database only
 */
 
 // users table entity
@@ -27,8 +27,8 @@ type User struct {
 
 // organizations table entity
 type Organization struct {
-	ID        uuid.UUID // organization id
-	Name      string    // organization title
+	ID        uuid.UUID
+	Name      string // organization title
 	CreatorID uuid.UUID
 	Status    uint16 // state of organization
 	UpdaterID uuid.UUID
@@ -52,9 +52,9 @@ type Role struct {
 // employees table entity
 type Employee struct {
 	ID           uuid.UUID
-	User         User
-	Organization Organization
-	Role         Role
+	User         User         // foreign key
+	Organization Organization // foreign key
+	Role         Role         // foreign key
 	Status       int16
 	CreateBy     uuid.UUID
 	UpdatedBy    uuid.UUID
@@ -65,7 +65,7 @@ type Employee struct {
 // payrolls table entity
 type Payroll struct {
 	ID        uuid.UUID
-	Employee  Employee
+	Employee  Employee // foreign key
 	Ctc       int32
 	Allowance int32
 	CreateBy  uuid.UUID

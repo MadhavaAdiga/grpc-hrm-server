@@ -16,6 +16,23 @@ func TestCreatePayroll(t *testing.T) {
 	createPayroll(t)
 }
 
+func TestFindPayRoll(t *testing.T) {
+	t.Parallel()
+
+	payroll := createPayroll(t)
+
+	payroll1, err := testSQLStore.FindPayrollByEmp(context.Background(), payroll.Employee.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, payroll.ID, payroll1.ID)
+	require.Equal(t, payroll.Ctc, payroll1.Ctc)
+	require.Equal(t, payroll.Employee, payroll1.Employee)
+	require.Equal(t, payroll.Allowance, payroll1.Allowance)
+	require.Equal(t, payroll.CreateBy, payroll1.CreateBy)
+	require.Equal(t, payroll.CreatedAt, payroll1.CreatedAt)
+
+}
+
 func createPayroll(t *testing.T) db.Payroll {
 	emp := createEmployee(t)
 
@@ -32,6 +49,7 @@ func createPayroll(t *testing.T) db.Payroll {
 	require.NotEqual(t, payroll.ID, uuid.Nil)
 
 	require.Equal(t, payroll.Ctc, arg.Ctc)
+	require.Equal(t, payroll.Employee.ID, emp.ID)
 	require.Equal(t, payroll.Allowance, arg.Allowance)
 	require.Equal(t, payroll.CreateBy, arg.CreatedBy)
 

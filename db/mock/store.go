@@ -156,19 +156,19 @@ func (mr *MockStoreMockRecorder) FindOrganizationByName(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOrganizationByName", reflect.TypeOf((*MockStore)(nil).FindOrganizationByName), arg0, arg1)
 }
 
-// FindPayroll mocks base method.
-func (m *MockStore) FindPayroll(arg0 context.Context, arg1 uuid.UUID) (db.Payroll, error) {
+// FindPayrollByEmp mocks base method.
+func (m *MockStore) FindPayrollByEmp(arg0 context.Context, arg1 uuid.UUID) (db.Payroll, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindPayroll", arg0, arg1)
+	ret := m.ctrl.Call(m, "FindPayrollByEmp", arg0, arg1)
 	ret0, _ := ret[0].(db.Payroll)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindPayroll indicates an expected call of FindPayroll.
-func (mr *MockStoreMockRecorder) FindPayroll(arg0, arg1 interface{}) *gomock.Call {
+// FindPayrollByEmp indicates an expected call of FindPayrollByEmp.
+func (mr *MockStoreMockRecorder) FindPayrollByEmp(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayroll", reflect.TypeOf((*MockStore)(nil).FindPayroll), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayrollByEmp", reflect.TypeOf((*MockStore)(nil).FindPayrollByEmp), arg0, arg1)
 }
 
 // FindRoleByOrganizationID mocks base method.
@@ -199,6 +199,21 @@ func (m *MockStore) FindRoleByOrganizationName(arg0 context.Context, arg1 db.Fin
 func (mr *MockStoreMockRecorder) FindRoleByOrganizationName(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindRoleByOrganizationName", reflect.TypeOf((*MockStore)(nil).FindRoleByOrganizationName), arg0, arg1)
+}
+
+// FindUserById mocks base method.
+func (m *MockStore) FindUserById(arg0 context.Context, arg1 uuid.UUID) (db.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindUserById", arg0, arg1)
+	ret0, _ := ret[0].(db.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindUserById indicates an expected call of FindUserById.
+func (mr *MockStoreMockRecorder) FindUserById(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserById", reflect.TypeOf((*MockStore)(nil).FindUserById), arg0, arg1)
 }
 
 // FindUserByName mocks base method.
