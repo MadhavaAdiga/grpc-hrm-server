@@ -111,6 +111,21 @@ func (mr *MockStoreMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockStore)(nil).CreateUser), arg0, arg1)
 }
 
+// FindAdminEmployee mocks base method.
+func (m *MockStore) FindAdminEmployee(arg0 context.Context, arg1 db.FindAdminEmployeeParam) (db.Employee, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAdminEmployee", arg0, arg1)
+	ret0, _ := ret[0].(db.Employee)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAdminEmployee indicates an expected call of FindAdminEmployee.
+func (mr *MockStoreMockRecorder) FindAdminEmployee(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAdminEmployee", reflect.TypeOf((*MockStore)(nil).FindAdminEmployee), arg0, arg1)
+}
+
 // FindEmployeeByUnameAndOrg mocks base method.
 func (m *MockStore) FindEmployeeByUnameAndOrg(arg0 context.Context, arg1 db.FindEmployeeUnameAndOrgParam) (db.Employee, error) {
 	m.ctrl.T.Helper()

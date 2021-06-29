@@ -45,6 +45,32 @@ func TestFindEmpbyUNameAndOrg(t *testing.T) {
 	require.Equal(t, emp.CreatedAt, emp1.CreatedAt)
 }
 
+func TestFindAdminEmployee(t *testing.T) {
+	t.Parallel()
+
+	emp := createEmployee(t)
+
+	org, err := testSQLStore.FindOrganizationByID(context.Background(), emp.Organization.ID)
+	require.NoError(t, err)
+
+	findArg := db.FindAdminEmployeeParam{
+		OrganizationName: org.Name,
+		EmployeeId:       emp.ID,
+	}
+
+	emp1, err := testSQLStore.FindAdminEmployee(context.Background(), findArg)
+	require.NoError(t, err)
+	require.NotNil(t, emp1)
+
+	require.Equal(t, emp.ID, emp1.ID)
+	require.Equal(t, emp.User.ID, emp1.User.ID)
+	require.Equal(t, emp.Organization.ID, emp1.Organization.ID)
+	require.Equal(t, emp.Role.ID, emp1.Role.ID)
+	require.Equal(t, emp.Status, emp1.Status)
+	require.Equal(t, emp.CreateBy, emp1.CreateBy)
+	require.Equal(t, emp.CreatedAt, emp1.CreatedAt)
+}
+
 func createEmployee(t *testing.T) db.Employee {
 	org := createOrganization(t)
 	usr := createUser(t)

@@ -25,7 +25,22 @@ func TestCreateOrganization(t *testing.T) {
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
 
+	empId := uuid.New()
+
+	emp := db.Employee{
+		ID:           empId,
+		Organization: db.Organization{Name: "HRM_GRPC"},
+		User:         db.User{},
+		Role:         db.Role{ID: uuid.New(), Permissions: []int32{6}},
+		Status:       1,
+		CreateBy:     uuid.New(),
+	}
+
+	store.EXPECT().FindAdminEmployee(gomock.Any(), gomock.All()).Times(1).Return(emp, nil)
 	store.EXPECT().CreateOrganization(gomock.Any(), gomock.Any()).Times(1)
+
+	// store.EXPECT().FindAdminEmployee(gomock.Any(), gomock.All()).AnyTimes().Return(db.Employee{}, sql.ErrNoRows)
+	// store.EXPECT().CreateOrganization(gomock.Any(), gomock.Any()).Times(0)
 
 	serverAddr := startTestServer(t, store)
 	client := createTestClient(t, serverAddr)
@@ -58,8 +73,6 @@ func TestFindOrganization(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-	// create organization stub
-	store.EXPECT().CreateOrganization(gomock.Any(), gomock.All()).Times(1).Return(org, nil)
 
 	serverAdr := startTestServer(t, store)
 	client := createTestClient(t, serverAdr)
@@ -68,10 +81,6 @@ func TestFindOrganization(t *testing.T) {
 		Name:      org.Name,
 		CreatorId: org.CreatorID.String(),
 	}
-	// create a new organiztion
-	res1, err := client.CreateOrganization(context.Background(), req)
-	require.NoError(t, err)
-	require.NotNil(t, res1)
 
 	store.EXPECT().FindOrganizationByName(gomock.Any(), gomock.Eq(req.Name)).Times(1).Return(org, nil)
 
@@ -81,7 +90,6 @@ func TestFindOrganization(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, res2)
 
-	require.Equal(t, res1.Id, res2.GetOrganization().Id)
 	require.Equal(t, res2.GetOrganization().Name, req.Name)
 }
 

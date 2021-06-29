@@ -2,9 +2,11 @@ package organization
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-hclog"
 	"github.com/lib/pq"
@@ -44,7 +46,27 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 		return nil, status.Errorf(codes.InvalidArgument, "creator id is not a valid uuid: %v", err)
 	}
 
-	// todo check if its a valid cretor id by checking in db
+	// param for find operation
+	// employee of HRM_GRPC has previlage to create a company
+	creatorArg := db.FindAdminEmployeeParam{
+		OrganizationName: "HRM_GRPC",
+		EmployeeId:       creatorID,
+	}
+	// check if creator exists and belongs to HRM_GRPC
+	creator, err := server.store.FindAdminEmployee(ctx, creatorArg)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			server.log.Info("invalid creator", "error", err)
+			return nil, status.Errorf(codes.NotFound, "creator does not belong to organization: %v", err)
+		}
+		server.log.Info("failed to find creator", "error", err)
+		return nil, status.Errorf(codes.Internal, "unable to create new organization: %v", err)
+	}
+	// check for admin previlage
+	if !utils.CheckPermission(hrm.Permission_ADMIN, creator.Role.Permissions) {
+		server.log.Info("invalid creator", "error", err)
+		return nil, status.Errorf(codes.PermissionDenied, "creator does not have Admin previlage: %v", err)
+	}
 
 	arg := db.CreateOrganizationParam{
 		Name: title,

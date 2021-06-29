@@ -6,9 +6,10 @@ import "permission.proto";
 
 message CreateRoleRequest {
     string name = 1;
-    repeated Permission permissions = 2;
+    string organization_name = 2;
+    repeated Permission permissions = 3;
     // username
-    string createdBy = 3;
+    string createdBy = 4;
 }
 
 message CreateRoleResponse {

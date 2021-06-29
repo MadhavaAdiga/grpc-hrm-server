@@ -25,6 +25,7 @@ type Store interface {
 	// employees
 	CreateEmployee(ctx context.Context, arg CreateEmployeeParam) (Employee, error)
 	FindEmployeeByUnameAndOrg(ctx context.Context, arg FindEmployeeUnameAndOrgParam) (Employee, error)
+	FindAdminEmployee(ctx context.Context, arg FindAdminEmployeeParam) (Employee, error)
 	// payrolls
 	CreatePayroll(ctx context.Context, arg CreatePayrollParam) (Payroll, error)
 	FindPayrollByEmp(ctx context.Context, id uuid.UUID) (Payroll, error)
