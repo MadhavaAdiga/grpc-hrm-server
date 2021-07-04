@@ -8,8 +8,8 @@ message CreateRoleRequest {
     string name = 1;
     string organization_name = 2;
     repeated Permission permissions = 3;
-    // username
-    string createdBy = 4;
+    // user id
+    string creator_id = 4;
 }
 
 message CreateRoleResponse {

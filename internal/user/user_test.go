@@ -130,8 +130,8 @@ func TestCreateUser(t *testing.T) {
 		},
 	}
 
-	for i := range testcase {
-		test := testcase[i]
+	for _, test := range testcase {
+		// test := testcase[i]
 
 		t.Run(test.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)

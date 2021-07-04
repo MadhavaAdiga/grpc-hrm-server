@@ -50,7 +50,7 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 	}
 
 	// check for valid emailId if passed
-	if len(req.EmailId) > 0 {
+	if len(req.GetEmailId()) > 0 {
 		if !utils.ValidateMail(req.EmailId) {
 			server.log.Info("eamil id is invalid format")
 			return nil, status.Errorf(codes.InvalidArgument, "invalid email-id format,must in a proper email-id format")

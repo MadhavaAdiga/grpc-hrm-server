@@ -42,3 +42,22 @@ func TestCheckPermission(t *testing.T) {
 	v = utils.CheckPermission(permissionType2, permissions2)
 	require.False(t, v)
 }
+
+func TestCheckPermissions(t *testing.T) {
+	permissions := []hrm.Permission{hrm.Permission_ADMIN, hrm.Permission_CAN_ADD_EMPLOYEE}
+	permissionList := []int32{6, 1}
+
+	b := utils.CheckPermissions(permissions, permissionList)
+	require.True(t, b)
+
+	permissions = []hrm.Permission{hrm.Permission_ADMIN, hrm.Permission_CAN_ADD_EMPLOYEE}
+	permissionList = []int32{6, 5}
+
+	b = utils.CheckPermissions(permissions, permissionList)
+	require.True(t, b)
+	permissions = []hrm.Permission{hrm.Permission_ADMIN, hrm.Permission_CAN_ADD_EMPLOYEE}
+	permissionList = []int32{3, 5}
+
+	b = utils.CheckPermissions(permissions, permissionList)
+	require.False(t, b)
+}

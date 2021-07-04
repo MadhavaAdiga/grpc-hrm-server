@@ -104,8 +104,12 @@ func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm
 	// find record from db
 	organization, err := server.store.FindOrganizationByName(ctx, title)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			server.log.Info("not found", "error", err)
+			return nil, status.Errorf(codes.NotFound, "organization is not found: %v", err)
+		}
 		server.log.Info("request organization not found", "error", err)
-		return nil, status.Errorf(codes.NotFound, "organization is not found: %v", err)
+		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
 	// map db.Organization to protobuf organization message

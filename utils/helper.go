@@ -21,7 +21,6 @@ func ValidateMail(email string) bool {
 }
 
 // check for a valid permission
-// return a bool
 func CheckPermission(permissionType hrm.Permission, permissionList []int32) bool {
 	for _, v := range permissionList {
 		if v == int32(permissionType.Number()) {
@@ -29,4 +28,23 @@ func CheckPermission(permissionType hrm.Permission, permissionList []int32) bool
 		}
 	}
 	return false
+}
+
+// check if a valid permission exists in a list of given permission
+func CheckPermissions(validPermissions []hrm.Permission, permissionList []int32) bool {
+	var count int16 = 0
+
+	m := make(map[int32]string)
+	// create a map for validating
+	for _, v := range validPermissions {
+		m[int32(v.Number())] = v.String()
+	}
+
+	for _, v := range permissionList {
+		if _, ok := m[v]; ok {
+			count++
+		}
+	}
+
+	return count > 0
 }
