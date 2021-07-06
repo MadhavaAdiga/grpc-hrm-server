@@ -11,8 +11,7 @@ message CreateEmployeeRequest {
     string organization_name = 2;
     // Employee role from Role
     string role_name = 3; 
-    bool active = 4;
-    string create_by = 5;
+    string creator_id = 4;
 }
 
 message CreateEmployeeResponse {

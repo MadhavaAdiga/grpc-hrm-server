@@ -64,8 +64,8 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 	}
 	// check for admin previlage
 	if !utils.CheckPermission(hrm.Permission_ADMIN, creator.Role.Permissions) {
-		server.log.Info("invalid creator", "error", err)
-		return nil, status.Errorf(codes.PermissionDenied, "creator does not have Admin previlage: %v", err)
+		server.log.Info("invalid creator")
+		return nil, status.Errorf(codes.PermissionDenied, "creator does not have Admin previlage")
 	}
 
 	arg := db.CreateOrganizationParam{
