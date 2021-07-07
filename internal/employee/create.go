@@ -58,12 +58,6 @@ func (server *EmployeeServer) CreateEmployee(ctx context.Context, req *hrm.Creat
 		return nil, status.Errorf(codes.PermissionDenied, "creator does not have reqired previlage")
 	}
 
-	// check for organization
-	if req.GetOrganizationName() != creator.Organization.Name {
-		server.log.Info("creator does not belong to the organbization", "error", err)
-		return nil, status.Errorf(codes.PermissionDenied, "Creator is not an employee of the organization: %s", req.GetOrganizationName())
-	}
-
 	// check if user exists
 	user, err := server.store.FindUserByName(ctx, req.GetUserName())
 	if err != nil {
