@@ -114,12 +114,12 @@ func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm
 
 	// map db.Organization to protobuf organization message
 	o := &hrm.Organization{
-		Id: organization.ID.String(),
-		// CreatedBy: organization.CreatedBy,
-		CreatorId: organization.CreatorID.String(),
+		Id:        organization.ID.String(),
 		Name:      organization.Name,
+		CreatedBy: "",
+		CreatorId: organization.CreatorID.String(),
 		Status:    hrm.Organization_Status(organization.Status),
-		// UpdatedBy: organization.UpdatedBy,
+		UpdatedBy: "",
 		UpdaterId: organization.UpdaterID.String(),
 		CreatedAt: timestamppb.New(organization.CreatedAt),
 		UpdatedAt: timestamppb.New(organization.UpdatedAt),

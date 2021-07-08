@@ -135,6 +135,7 @@ func (server *UserServer) FindUser(ctx context.Context, req *hrm.FindUserRequest
 			FirstName:     user.FirstName,
 			LastName:      user.LastName,
 			UserName:      user.UserName,
+			Password:      "",
 			Address:       user.Address,
 			EmailId:       user.Email,
 			ContactNumber: user.ContactNumber,
