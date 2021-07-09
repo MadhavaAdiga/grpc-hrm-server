@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	mockdb "github.com/MadhavaAdiga/grpc-hrm-server/db/mock"
@@ -19,7 +20,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func TestCreateEMployee(t *testing.T) {
+func TestCreateEmployee(t *testing.T) {
 	t.Parallel()
 
 	orgName := utils.RandomName()
@@ -163,6 +164,46 @@ func TestCreateEMployee(t *testing.T) {
 			test.checkresponse(t, res, err)
 		})
 	}
+}
+
+func TestFindEmployee(t *testing.T) {
+	t.Parallel()
+
+	orgName := utils.RandomName()
+	userName := utils.RandomName()
+
+	employee := db.Employee{
+		ID:           uuid.New(),
+		User:         db.User{UserName: userName},
+		Organization: db.Organization{Name: orgName},
+		Role:         db.Role{},
+		Status:       0,
+		CreateBy:     [16]byte{},
+		UpdatedBy:    [16]byte{},
+		CreatedAt:    time.Time{},
+		UpdatedAt:    time.Time{},
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	store := mockdb.NewMockStore(ctrl)
+
+	store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Return(employee, nil)
+
+	// create server and client for test
+	serverAddr := startTestServer(t, store)
+	client := createTestClient(t, serverAddr)
+
+	arg := &hrm.FindEmployeeRequest{
+		Filter: &hrm.Filter{
+			OrganizationName: orgName,
+			UserName:         userName,
+		},
+	}
+	res, err := client.FindEmployee(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotNil(t, res)
 
 }
 
