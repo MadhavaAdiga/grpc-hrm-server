@@ -21,7 +21,7 @@ func TestFindPayRoll(t *testing.T) {
 
 	payroll := createPayroll(t)
 
-	payroll1, err := testSQLStore.FindPayrollByEmp(context.Background(), payroll.Employee.ID)
+	payroll1, err := testSQLStore.FindPayrollByEmpID(context.Background(), payroll.Employee.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, payroll.ID, payroll1.ID)

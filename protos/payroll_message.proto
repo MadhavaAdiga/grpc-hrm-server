@@ -5,7 +5,7 @@ option go_package ="/hrm";
 import "google/protobuf/timestamp.proto";
 
 message Payroll{
-    int64 id = 1;
+    string id = 1;
     string employee_id = 2;
     int32 ctc = 3;
     int32 allowance = 4;

@@ -171,19 +171,34 @@ func (mr *MockStoreMockRecorder) FindOrganizationByName(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOrganizationByName", reflect.TypeOf((*MockStore)(nil).FindOrganizationByName), arg0, arg1)
 }
 
-// FindPayrollByEmp mocks base method.
-func (m *MockStore) FindPayrollByEmp(arg0 context.Context, arg1 uuid.UUID) (db.Payroll, error) {
+// FindPayrollByEmpID mocks base method.
+func (m *MockStore) FindPayrollByEmpID(arg0 context.Context, arg1 uuid.UUID) (db.Payroll, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindPayrollByEmp", arg0, arg1)
+	ret := m.ctrl.Call(m, "FindPayrollByEmpID", arg0, arg1)
 	ret0, _ := ret[0].(db.Payroll)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindPayrollByEmp indicates an expected call of FindPayrollByEmp.
-func (mr *MockStoreMockRecorder) FindPayrollByEmp(arg0, arg1 interface{}) *gomock.Call {
+// FindPayrollByEmpID indicates an expected call of FindPayrollByEmpID.
+func (mr *MockStoreMockRecorder) FindPayrollByEmpID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayrollByEmp", reflect.TypeOf((*MockStore)(nil).FindPayrollByEmp), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayrollByEmpID", reflect.TypeOf((*MockStore)(nil).FindPayrollByEmpID), arg0, arg1)
+}
+
+// FindPayrollByEmpName mocks base method.
+func (m *MockStore) FindPayrollByEmpName(arg0 context.Context, arg1 string) (db.Payroll, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindPayrollByEmpName", arg0, arg1)
+	ret0, _ := ret[0].(db.Payroll)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindPayrollByEmpName indicates an expected call of FindPayrollByEmpName.
+func (mr *MockStoreMockRecorder) FindPayrollByEmpName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindPayrollByEmpName", reflect.TypeOf((*MockStore)(nil).FindPayrollByEmpName), arg0, arg1)
 }
 
 // FindRoleByOrganizationID mocks base method.

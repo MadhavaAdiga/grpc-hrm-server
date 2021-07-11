@@ -28,7 +28,8 @@ type Store interface {
 	FindAdminEmployee(ctx context.Context, arg FindAdminEmployeeParam) (Employee, error)
 	// payrolls
 	CreatePayroll(ctx context.Context, arg CreatePayrollParam) (Payroll, error)
-	FindPayrollByEmp(ctx context.Context, id uuid.UUID) (Payroll, error)
+	FindPayrollByEmpID(ctx context.Context, id uuid.UUID) (Payroll, error)
+	FindPayrollByEmpName(ctx context.Context, name string) (Payroll, error)
 }
 
 // A compile time check to make sure Oueries implements Querier

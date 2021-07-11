@@ -7,9 +7,15 @@ import "payroll_message.proto";
 message AddPayrollRequest{
     string username = 1;
     // ctc
-    int32 yearly = 2;
-    // username 
-    string created_by = 3;
+    oneof ctc{
+        int32 yearly = 2;
+        int32 monthly = 3;
+    }
+    int32 allowance = 4;
+    // organization the emplolyee belongs to
+    string organization_name  = 5;
+    // employee id 
+    string creator_id = 6;
 }
 // respond with the username of employee
 message PayrollResponse{
@@ -23,15 +29,18 @@ message UpdatePayrollRequest {
         int32 yearly = 2;
         int32 monthly = 3;
     }
-    // username
-    string updated_by = 4;
-}
-
-
-message FindEmployeePayrollRequest { 
     // employee id
-    string id = 1; 
+    string updater_id = 4;
 }
+
+message PayrollFilter {
+   oneof key{
+       string id =1 ;
+       string employee_name = 2;
+   }
+}
+
+message FindEmployeePayrollRequest { PayrollFilter filter = 1;}
 message FindEmployeePayrollResponse { Payroll payroll = 1; }
 
 

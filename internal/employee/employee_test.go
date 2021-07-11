@@ -196,7 +196,7 @@ func TestFindEmployee(t *testing.T) {
 	client := createTestClient(t, serverAddr)
 
 	arg := &hrm.FindEmployeeRequest{
-		Filter: &hrm.Filter{
+		Filter: &hrm.EmployeeFilter{
 			OrganizationName: orgName,
 			UserName:         userName,
 		},

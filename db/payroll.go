@@ -52,14 +52,14 @@ func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam
 	return p, err
 }
 
-const findPayrollByEmp = `
+const findPayrollByEmpId = `
 	SELECT * FROM payrolls 
 	WHERE employee = $1
 	LIMIT 1;
 `
 
-func (store *SQLStore) FindPayrollByEmp(ctx context.Context, id uuid.UUID) (Payroll, error) {
-	row := store.db.QueryRowContext(ctx, findPayrollByEmp, id)
+func (store *SQLStore) FindPayrollByEmpID(ctx context.Context, id uuid.UUID) (Payroll, error) {
+	row := store.db.QueryRowContext(ctx, findPayrollByEmpId, id)
 
 	var p Payroll
 
@@ -72,6 +72,33 @@ func (store *SQLStore) FindPayrollByEmp(ctx context.Context, id uuid.UUID) (Payr
 		&p.UpdatedBy,
 		&p.CreatedAt,
 		&p.UpdatedAt,
+	)
+
+	return p, err
+}
+
+const findPayrollByEmpName = `
+	SELECT * FROM payrolls
+		JOIN employees ON 
+		employees."user" = (SELECT id from users where user_name = $1)
+		LIMIT 1;    
+`
+
+func (store *SQLStore) FindPayrollByEmpName(ctx context.Context, name string) (Payroll, error) {
+	row := store.db.QueryRowContext(ctx, findPayrollByEmpName, name)
+
+	var p Payroll
+
+	err := row.Scan(
+		&p.ID,
+		&p.Employee.ID,
+		&p.Ctc,
+		&p.Allowance,
+		&p.CreateBy,
+		&p.UpdatedBy,
+		&p.CreatedAt,
+		&p.UpdatedAt,
+		&p.Employee.ID, &p.Employee.User, &p.Employee.Organization, &p.Employee.Role, &p.Employee.Status, &p.Employee.CreateBy, &p.Employee.UpdatedBy, &p.Employee.CreatedAt, &p.Employee.UpdatedAt,
 	)
 
 	return p, err
