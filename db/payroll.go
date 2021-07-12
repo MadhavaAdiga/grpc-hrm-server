@@ -53,9 +53,9 @@ func (store *SQLStore) CreatePayroll(ctx context.Context, arg CreatePayrollParam
 }
 
 const findPayrollByEmpId = `
-	SELECT * FROM payrolls 
-	WHERE employee = $1
-	LIMIT 1;
+	SELECT * FROM payrolls p
+	JOIN employees e ON e.id = p.employee
+		WHERE employee = $1;
 `
 
 func (store *SQLStore) FindPayrollByEmpID(ctx context.Context, id uuid.UUID) (Payroll, error) {
@@ -72,16 +72,16 @@ func (store *SQLStore) FindPayrollByEmpID(ctx context.Context, id uuid.UUID) (Pa
 		&p.UpdatedBy,
 		&p.CreatedAt,
 		&p.UpdatedAt,
+		&p.Employee.ID, &p.Employee.User.ID, &p.Employee.Organization.ID, &p.Employee.Role.ID, &p.Employee.Status, &p.Employee.CreateBy, &p.Employee.UpdatedBy, &p.Employee.CreatedAt, &p.Employee.UpdatedAt,
 	)
 
 	return p, err
 }
 
 const findPayrollByEmpName = `
-	SELECT * FROM payrolls
-		JOIN employees ON 
-		employees."user" = (SELECT id from users where user_name = $1)
-		LIMIT 1;    
+	SELECT * FROM payrolls p
+	JOIN employees e ON e.id = p.employee
+		WHERE e."user" = (SELECT id from users where user_name = $1);
 `
 
 func (store *SQLStore) FindPayrollByEmpName(ctx context.Context, name string) (Payroll, error) {
@@ -98,7 +98,7 @@ func (store *SQLStore) FindPayrollByEmpName(ctx context.Context, name string) (P
 		&p.UpdatedBy,
 		&p.CreatedAt,
 		&p.UpdatedAt,
-		&p.Employee.ID, &p.Employee.User, &p.Employee.Organization, &p.Employee.Role, &p.Employee.Status, &p.Employee.CreateBy, &p.Employee.UpdatedBy, &p.Employee.CreatedAt, &p.Employee.UpdatedAt,
+		&p.Employee.ID, &p.Employee.User.ID, &p.Employee.Organization.ID, &p.Employee.Role.ID, &p.Employee.Status, &p.Employee.CreateBy, &p.Employee.UpdatedBy, &p.Employee.CreatedAt, &p.Employee.UpdatedAt,
 	)
 
 	return p, err

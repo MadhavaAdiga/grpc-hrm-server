@@ -67,7 +67,6 @@ func (server *PayrollServer) FindEmployeePayroll(ctx context.Context, req *hrm.F
 
 // Helper function to perform find operation based of employee id
 func findByEmployeeId(id uuid.UUID, ctx context.Context, server *PayrollServer) (db.Payroll, error) {
-
 	p, err := server.store.FindPayrollByEmpID(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -82,5 +81,14 @@ func findByEmployeeId(id uuid.UUID, ctx context.Context, server *PayrollServer) 
 
 // Helper function to perform find operation based of employee name
 func findByEmployeeName(employeeName string, ctx context.Context, server *PayrollServer) (db.Payroll, error) {
-	return db.Payroll{}, nil
+	p, err := server.store.FindPayrollByEmpName(ctx, employeeName)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			server.log.Info("not found", "error", err)
+			return db.Payroll{}, status.Errorf(codes.NotFound, "payroll of the employee is not found: %v", err)
+		}
+		server.log.Info("request payroll not found", "error", err)
+		return db.Payroll{}, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+	return p, nil
 }
