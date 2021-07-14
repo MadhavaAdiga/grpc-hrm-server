@@ -92,6 +92,94 @@ func TestCreatePayroll(t *testing.T) {
 
 }
 
+func TestFindPayroll(t *testing.T) {
+	t.Parallel()
+
+	empName := utils.RandomName()
+	empId := uuid.New()
+
+	emp := db.Employee{
+		ID: empId,
+		User: db.User{
+			UserName: empName,
+		},
+	}
+
+	payroll := db.Payroll{
+		Employee:  emp,
+		ID:        uuid.New(),
+		Ctc:       utils.RandomInt(0, 10000),
+		Allowance: utils.RandomInt(0, 1000),
+		CreateBy:  uuid.New(),
+		UpdatedBy: uuid.New(),
+	}
+
+	testcase := []struct {
+		name          string
+		buildReq      func(t *testing.T) *hrm.FindEmployeePayrollRequest
+		buildStubs    func(store *mockdb.MockStore)
+		checkresponse func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error)
+	}{
+		{
+			name: "Best case by emp name",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_EmployeeName{EmployeeName: empName},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpName(gomock.Any(), gomock.All()).Times(1).Return(payroll, nil)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.NoError(t, err)
+				require.NotNil(t, res)
+			},
+		},
+		{
+			name: "Best case by emp name",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_Id{Id: empId.String()},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpID(gomock.Any(), gomock.All()).Times(1).Return(payroll, nil)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.NoError(t, err)
+				require.NotNil(t, res)
+			},
+		},
+	}
+
+	for _, test := range testcase {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		store := mockdb.NewMockStore(ctrl)
+
+		// building stub for mock db
+		test.buildStubs(store)
+
+		// create server and client for test
+		serverAddr := startTestServer(t, store)
+		client := createTestClient(t, serverAddr)
+
+		// get test request
+		req := test.buildReq(t)
+
+		// create new user
+		res, err := client.FindEmployeePayroll(context.Background(), req)
+		// checking for valid response by test
+		test.checkresponse(t, res, err)
+	}
+
+}
+
 // Helper function start a test server
 func startTestServer(t *testing.T, store db.Store) string {
 
