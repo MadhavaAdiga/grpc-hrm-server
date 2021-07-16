@@ -2,6 +2,8 @@ package payroll_test
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"net"
 	"testing"
 
@@ -61,6 +63,48 @@ func TestCreatePayroll(t *testing.T) {
 			checkresponse: func(t *testing.T, res *hrm.PayrollResponse, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, res)
+			},
+		}, {
+			name: "invalid creatorId",
+			buildReq: func(t *testing.T, req *hrm.AddPayrollRequest) *hrm.AddPayrollRequest {
+				return req
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindAdminEmployee(gomock.Any(), gomock.All()).Times(1).Return(db.Employee{}, sql.ErrNoRows)
+				store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(0)
+				store.EXPECT().CreatePayroll(gomock.Any(), gomock.All()).Times(0)
+			},
+			checkresponse: func(t *testing.T, res *hrm.PayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		}, {
+			name: "invalid employee",
+			buildReq: func(t *testing.T, req *hrm.AddPayrollRequest) *hrm.AddPayrollRequest {
+				return req
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindAdminEmployee(gomock.Any(), gomock.All()).Times(1).Return(creator, nil)
+				store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Times(1).Return(emp, nil)
+				store.EXPECT().CreatePayroll(gomock.Any(), gomock.All()).Times(1).Return(db.Payroll{}, errors.New("internal error"))
+			},
+			checkresponse: func(t *testing.T, res *hrm.PayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		}, {
+			name: "unable to create",
+			buildReq: func(t *testing.T, req *hrm.AddPayrollRequest) *hrm.AddPayrollRequest {
+				return req
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindAdminEmployee(gomock.Any(), gomock.All()).Times(1).Return(creator, nil)
+				store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Return(db.Employee{}, sql.ErrNoRows)
+				store.EXPECT().CreatePayroll(gomock.Any(), gomock.All()).Times(0)
+			},
+			checkresponse: func(t *testing.T, res *hrm.PayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
 			},
 		},
 	}
@@ -138,7 +182,7 @@ func TestFindPayroll(t *testing.T) {
 			},
 		},
 		{
-			name: "Best case by emp name",
+			name: "Best case by empid",
 			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
 				return &hrm.FindEmployeePayrollRequest{
 					Filter: &hrm.PayrollFilter{
@@ -152,6 +196,70 @@ func TestFindPayroll(t *testing.T) {
 			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, res)
+			},
+		}, {
+			name: "invalid emp name",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_EmployeeName{EmployeeName: ""},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpName(gomock.Any(), gomock.All()).Times(0)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		}, {
+			name: "invalid empid",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_Id{Id: ""},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpID(gomock.Any(), gomock.All()).Times(0)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		}, {
+			name: "Not found by emp name",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_EmployeeName{EmployeeName: empName},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpName(gomock.Any(), gomock.All()).Times(1).Return(db.Payroll{}, sql.ErrNoRows)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		}, {
+			name: "Not found by empid",
+			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
+				return &hrm.FindEmployeePayrollRequest{
+					Filter: &hrm.PayrollFilter{
+						Key: &hrm.PayrollFilter_Id{Id: empId.String()},
+					},
+				}
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindPayrollByEmpID(gomock.Any(), gomock.All()).Times(1).Return(db.Payroll{}, sql.ErrNoRows)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeePayrollResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
 			},
 		},
 	}
