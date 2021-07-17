@@ -184,26 +184,68 @@ func TestFindEmployee(t *testing.T) {
 		UpdatedAt:    time.Time{},
 	}
 
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	store := mockdb.NewMockStore(ctrl)
-
-	store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Return(employee, nil)
-
-	// create server and client for test
-	serverAddr := startTestServer(t, store)
-	client := createTestClient(t, serverAddr)
-
-	arg := &hrm.FindEmployeeRequest{
+	reqStub := &hrm.FindEmployeeRequest{
 		Filter: &hrm.EmployeeFilter{
 			OrganizationName: orgName,
 			UserName:         userName,
 		},
 	}
-	res, err := client.FindEmployee(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+
+	testcase := []struct {
+		name          string
+		buildReq      func(t *testing.T, req *hrm.FindEmployeeRequest) *hrm.FindEmployeeRequest
+		buildStubs    func(store *mockdb.MockStore)
+		checkresponse func(t *testing.T, res *hrm.FindEmployeeResponse, err error)
+	}{
+		{
+			name: "Best case",
+			buildReq: func(t *testing.T, req *hrm.FindEmployeeRequest) *hrm.FindEmployeeRequest {
+				return req
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Return(employee, nil)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeeResponse, err error) {
+				require.NoError(t, err)
+				require.NotNil(t, res)
+			},
+		}, {
+			name: "Not found",
+			buildReq: func(t *testing.T, req *hrm.FindEmployeeRequest) *hrm.FindEmployeeRequest {
+				return req
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().FindEmployeeByUnameAndOrg(gomock.Any(), gomock.All()).Times(1).Return(db.Employee{}, sql.ErrNoRows)
+			},
+			checkresponse: func(t *testing.T, res *hrm.FindEmployeeResponse, err error) {
+				require.Error(t, err)
+				require.Nil(t, res)
+			},
+		},
+	}
+
+	for _, test := range testcase {
+		t.Run(test.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			// building stub for mock db
+			test.buildStubs(store)
+
+			// create server and client for test
+			serverAddr := startTestServer(t, store)
+			client := createTestClient(t, serverAddr)
+
+			// get test request
+			req := test.buildReq(t, reqStub)
+
+			// create new user
+			res, err := client.FindEmployee(context.Background(), req)
+			// checking for valid response by test
+			test.checkresponse(t, res, err)
+		})
+	}
 
 }
 
