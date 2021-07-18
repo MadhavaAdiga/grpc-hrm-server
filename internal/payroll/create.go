@@ -24,6 +24,11 @@ func (server *PayrollServer) AddPayroll(ctx context.Context, req *hrm.AddPayroll
 		return nil, status.Errorf(codes.InvalidArgument, "Organization is a required field")
 	}
 
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
+
 	// check for a valid uuid
 	creatorID, err := uuid.Parse(req.GetCreatorId())
 	if err != nil {

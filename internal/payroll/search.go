@@ -6,6 +6,7 @@ import (
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -19,6 +20,11 @@ func (server *PayrollServer) FindEmployeePayroll(ctx context.Context, req *hrm.F
 	if filter == nil {
 		server.log.Error("filter is nil")
 		return nil, status.Errorf(codes.InvalidArgument, "filter is required")
+	}
+
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
 	}
 
 	var payroll db.Payroll

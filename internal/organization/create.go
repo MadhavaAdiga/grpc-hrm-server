@@ -24,6 +24,11 @@ func (server *OrganizationServer) CreateOrganization(ctx context.Context, req *h
 		return nil, status.Errorf(codes.InvalidArgument, "title is required")
 	}
 
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
+
 	// check for a valid uuid
 	creatorID, err := uuid.Parse(req.GetCreatorId())
 	if err != nil {

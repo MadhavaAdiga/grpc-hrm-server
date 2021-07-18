@@ -59,6 +59,11 @@ func (server *UserServer) CreateUser(ctx context.Context, req *hrm.CreateUserReq
 		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
+
 	// create a param to store value to db
 	arg := db.CreateUserParam{
 		FirstName:      req.GetFirstName(),

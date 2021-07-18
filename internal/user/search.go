@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -18,6 +19,11 @@ func (server *UserServer) FindUser(ctx context.Context, req *hrm.FindUserRequest
 	if len(userName) == 0 {
 		server.log.Info("user is empty")
 		return nil, status.Errorf(codes.InvalidArgument, "username is required")
+	}
+
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
 	}
 
 	user, err := server.store.FindUserByName(ctx, userName)

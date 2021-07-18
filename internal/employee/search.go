@@ -6,6 +6,7 @@ import (
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -27,6 +28,11 @@ func (server *EmployeeServer) FindEmployee(ctx context.Context, req *hrm.FindEmp
 	if len(filter.GetUserName()) == 0 {
 		server.log.Info("invalid user name is empty")
 		return nil, status.Errorf(codes.InvalidArgument, "user name is required")
+	}
+
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
 	}
 
 	// find arg

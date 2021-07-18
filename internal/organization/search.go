@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,6 +15,11 @@ import (
 func (server *OrganizationServer) FindOrganization(ctx context.Context, req *hrm.FindOrganizationRequest) (*hrm.FindOrganizationResponse, error) {
 	// name of organization
 	title := req.GetName()
+
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
 
 	// find record from db
 	organization, err := server.store.FindOrganizationByName(ctx, title)

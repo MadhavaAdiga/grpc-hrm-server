@@ -28,6 +28,12 @@ func (server *EmployeeServer) CreateEmployee(ctx context.Context, req *hrm.Creat
 		server.log.Error("RoleName is empty")
 		return nil, status.Errorf(codes.InvalidArgument, "RoleName is a required field")
 	}
+
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
+
 	// check for a valid uuid
 	creatorID, err := uuid.Parse(req.GetCreatorId())
 	if err != nil {

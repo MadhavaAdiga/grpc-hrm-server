@@ -33,6 +33,11 @@ func (server *RoleServer) CreateRole(ctx context.Context, req *hrm.CreateRoleReq
 		}
 	}
 
+	// handele context error
+	if err := utils.ContextError(ctx); err != nil {
+		return nil, err
+	}
+
 	// check for a valid uuid
 	creatorID, err := uuid.Parse(req.GetCreatorId())
 	if err != nil {
