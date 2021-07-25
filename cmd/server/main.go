@@ -6,7 +6,10 @@ import (
 	"os"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
+	"github.com/MadhavaAdiga/grpc-hrm-server/internal/employee"
 	"github.com/MadhavaAdiga/grpc-hrm-server/internal/organization"
+	"github.com/MadhavaAdiga/grpc-hrm-server/internal/payroll"
+	"github.com/MadhavaAdiga/grpc-hrm-server/internal/role"
 	"github.com/MadhavaAdiga/grpc-hrm-server/internal/user"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
 	"github.com/hashicorp/go-hclog"
@@ -44,6 +47,9 @@ func main() {
 	// create servers
 	userServer := user.NewUserServer(store, log)
 	organizationServer := organization.NewOrganizationServer(store, log)
+	employeeServer := employee.NewEmployeeServer(store, log)
+	roleServer := role.NewRoleServer(store, log)
+	payrollServer := payroll.NewPayrollServe(store, log)
 
 	// create tcp connection
 	listener, err := net.Listen("tcp", address)
@@ -56,6 +62,9 @@ func main() {
 	// register servers
 	hrm.RegisterUserServiceServer(grpcServer, userServer)
 	hrm.RegisterOrganizationServiceServer(grpcServer, organizationServer)
+	hrm.RegisterEmployeeServiceServer(grpcServer, employeeServer)
+	hrm.RegisterRoleServiceServer(grpcServer, roleServer)
+	hrm.RegisterPayrollServiceServer(grpcServer, payrollServer)
 
 	reflection.Register(grpcServer)
 

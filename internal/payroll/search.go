@@ -31,10 +31,10 @@ func (server *PayrollServer) FindEmployeePayroll(ctx context.Context, req *hrm.F
 	var err error
 	// find record base on type of key
 	switch filter.GetKey().(type) {
-	case *hrm.PayrollFilter_Id:
+	case *hrm.PayrollFilter_EmployeeId:
 		// check for valid uuid
 		var id uuid.UUID
-		id, err = uuid.Parse(filter.GetId())
+		id, err = uuid.Parse(filter.GetEmployeeId())
 		if err != nil {
 			server.log.Info("invalid uuid", "error", err)
 			return nil, status.Errorf(codes.InvalidArgument, "id is not a valid uuid: %v", err)

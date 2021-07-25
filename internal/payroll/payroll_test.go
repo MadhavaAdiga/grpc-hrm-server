@@ -186,7 +186,7 @@ func TestFindPayroll(t *testing.T) {
 			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
 				return &hrm.FindEmployeePayrollRequest{
 					Filter: &hrm.PayrollFilter{
-						Key: &hrm.PayrollFilter_Id{Id: empId.String()},
+						Key: &hrm.PayrollFilter_EmployeeId{EmployeeId: empId.String()},
 					},
 				}
 			},
@@ -218,7 +218,7 @@ func TestFindPayroll(t *testing.T) {
 			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
 				return &hrm.FindEmployeePayrollRequest{
 					Filter: &hrm.PayrollFilter{
-						Key: &hrm.PayrollFilter_Id{Id: ""},
+						Key: &hrm.PayrollFilter_EmployeeId{EmployeeId: ""},
 					},
 				}
 			},
@@ -250,7 +250,7 @@ func TestFindPayroll(t *testing.T) {
 			buildReq: func(t *testing.T) *hrm.FindEmployeePayrollRequest {
 				return &hrm.FindEmployeePayrollRequest{
 					Filter: &hrm.PayrollFilter{
-						Key: &hrm.PayrollFilter_Id{Id: empId.String()},
+						Key: &hrm.PayrollFilter_EmployeeId{EmployeeId: empId.String()},
 					},
 				}
 			},
