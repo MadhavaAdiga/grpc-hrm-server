@@ -2,30 +2,25 @@ package auth
 
 import (
 	"crypto"
-	"io/ioutil"
-	"log"
+	"encoding/hex"
 
-	"golang.org/x/crypto/pkcs12"
+	"golang.org/x/crypto/ed25519"
 )
 
 type AsymmetricStore struct {
-	certificate []byte
-	privatekey  crypto.PrivateKey
+	publicKey  crypto.PublicKey
+	privatekey crypto.PrivateKey
 }
 
 func NewAsymmetricStore() *AsymmetricStore {
-	p12_data, err := ioutil.ReadFile("../../cert/keystore.pkcs12")
-	if err != nil {
-		log.Fatal(err)
-	}
+	b, _ := hex.DecodeString("b4cbfb43df4ce210727d953e4a713307fa19bb7d9f85041438d9e11b942a37741eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2")
+	privKey := ed25519.PrivateKey(b)
 
-	key, cert, err := pkcs12.Decode(p12_data, "grpcstore")
-	if err != nil {
-		log.Fatal(err)
-	}
+	b, _ = hex.DecodeString("1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2")
+	pubKey := ed25519.PublicKey(b)
 
 	return &AsymmetricStore{
-		certificate: cert.Raw,
-		privatekey:  key.(crypto.PrivateKey),
+		publicKey:  pubKey,
+		privatekey: privKey,
 	}
 }

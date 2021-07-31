@@ -3,6 +3,7 @@ module github.com/MadhavaAdiga/grpc-hrm-server
 go 1.15
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/mock v1.5.0
 	github.com/google/uuid v1.1.2
 	github.com/hashicorp/go-hclog v0.16.1

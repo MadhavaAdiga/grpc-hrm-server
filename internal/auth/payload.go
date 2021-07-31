@@ -15,7 +15,7 @@ type Payload struct {
 	ID       uuid.UUID // id specific to the payload
 	UserName string
 	IssuedAt time.Time
-	ExprieAt time.Time
+	ExpireAt time.Time
 }
 
 /*
@@ -33,7 +33,7 @@ func NewPayload(userName string, duration time.Duration) (*Payload, error) {
 		ID:       id,
 		UserName: userName,
 		IssuedAt: time.Now(),
-		ExprieAt: time.Now().Add(duration),
+		ExpireAt: time.Now().Add(duration),
 	}
 
 	return payload, nil
@@ -41,7 +41,7 @@ func NewPayload(userName string, duration time.Duration) (*Payload, error) {
 
 // interface method implemetation
 func (payload *Payload) Valid() error {
-	if time.Now().After(payload.ExprieAt) {
+	if time.Now().After(payload.ExpireAt) {
 		return ErrExpriedToken
 	}
 	return nil

@@ -15,12 +15,6 @@ type PasetoManager struct {
 
 func NewPasetoManager() (TokenManager, error) {
 	key := NewAsymmetricStore()
-	// check if the key length is equal to required by the algorithm
-	// if len(key.privatekey) != chacha20poly1305.KeySize {
-	// 	return nil, fmt.Errorf("invalid key size: must be minimum of %d char", chacha20poly1305.KeySize)
-	// }
-
-	// log.Fatal((key.privatekey))
 
 	manager := &PasetoManager{
 		paseto:        paseto.NewV2(),
@@ -31,12 +25,13 @@ func NewPasetoManager() (TokenManager, error) {
 }
 
 // generate a new paseto token
-func (manager *PasetoManager) CreateToken(username string, durattion time.Duration) (string, error) {
+func (manager *PasetoManager) CreateToken(username string, duration time.Duration) (string, error) {
 	// create a new payload
-	payload, err := NewPayload(username, durattion)
+	payload, err := NewPayload(username, duration)
 	if err != nil {
 		return "", err
 	}
+
 	// encrypt token with asymmetric key
 	return manager.paseto.Sign(manager.asymmetricKey.privatekey, payload, nil)
 }
@@ -45,7 +40,7 @@ func (manager *PasetoManager) CreateToken(username string, durattion time.Durati
 func (manager *PasetoManager) VerifyToken(token string) (*Payload, error) {
 	payload := &Payload{}
 	// decrypt the token with asymmetric key
-	err := manager.paseto.Verify(token, manager.asymmetricKey.certificate, payload, nil)
+	err := manager.paseto.Verify(token, manager.asymmetricKey.publicKey, payload, nil)
 	if err != nil {
 		return nil, ErrInvalidToken
 	}
