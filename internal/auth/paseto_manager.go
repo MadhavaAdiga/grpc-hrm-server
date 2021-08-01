@@ -3,6 +3,7 @@ package auth
 import (
 	"time"
 
+	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
 	"github.com/o1egl/paseto"
 )
 
@@ -25,9 +26,9 @@ func NewPasetoManager() (TokenManager, error) {
 }
 
 // generate a new paseto token
-func (manager *PasetoManager) CreateToken(username string, duration time.Duration) (string, error) {
+func (manager *PasetoManager) CreateToken(username string, duration time.Duration, permissions []hrm.Permission) (string, error) {
 	// create a new payload
-	payload, err := NewPayload(username, duration)
+	payload, err := NewPayload(username, duration, permissions)
 	if err != nil {
 		return "", err
 	}

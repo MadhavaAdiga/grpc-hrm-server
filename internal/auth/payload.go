@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
 	"github.com/google/uuid"
 )
 
@@ -12,17 +13,18 @@ var ErrInvalidToken = errors.New("token is invalid")
 
 // implements jwt.Claims interface
 type Payload struct {
-	ID       uuid.UUID // id specific to the payload
-	UserName string
-	IssuedAt time.Time
-	ExpireAt time.Time
+	ID          uuid.UUID // id specific to the payload
+	UserName    string
+	Permissions []hrm.Permission
+	IssuedAt    time.Time
+	ExpireAt    time.Time
 }
 
 /*
   constructor to create a new payload
   duration is used to specify the deadline
 */
-func NewPayload(userName string, duration time.Duration) (*Payload, error) {
+func NewPayload(userName string, duration time.Duration, permissions []hrm.Permission) (*Payload, error) {
 	id, err := uuid.NewRandom()
 
 	if err != nil {
@@ -30,10 +32,11 @@ func NewPayload(userName string, duration time.Duration) (*Payload, error) {
 	}
 
 	payload := &Payload{
-		ID:       id,
-		UserName: userName,
-		IssuedAt: time.Now(),
-		ExpireAt: time.Now().Add(duration),
+		ID:          id,
+		UserName:    userName,
+		Permissions: permissions,
+		IssuedAt:    time.Now(),
+		ExpireAt:    time.Now().Add(duration),
 	}
 
 	return payload, nil
