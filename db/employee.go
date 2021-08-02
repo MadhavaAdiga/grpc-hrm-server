@@ -129,3 +129,35 @@ func (store SQLStore) FindAdminEmployee(ctx context.Context, arg FindAdminEmploy
 
 	return e, err
 }
+
+// find an employee on id joining organization name and role and user
+const findEmployee = `
+	SELECT * FROM employees e
+		JOIN users u on ON u.id = $1
+		JOIN organizations o ON o.id = e."organization"
+		JOIN roles r ON r.id = e."role"
+`
+
+// find an employee for the organization with roles
+func (store SQLStore) FindAdminEmployeeByUserID(ctx context.Context, id uuid.UUID) (Employee, error) {
+	row := store.db.QueryRowContext(ctx, findEmployee, id)
+
+	var e Employee
+
+	err := row.Scan(
+		&e.ID,
+		&e.User.ID,
+		&e.Organization.ID,
+		&e.Role.ID,
+		&e.Status,
+		&e.CreateBy,
+		&e.UpdatedBy,
+		&e.CreatedAt,
+		&e.UpdatedAt,
+		&e.User.ID, &e.User.FirstName, &e.User.LastName, &e.User.UserName, &e.User.HashedPassword, &e.User.Address, &e.User.Email, &e.User.ContactNumber, &e.User.CreatedAt, &e.User.UpdatedAt,
+		&e.Organization.ID, &e.Organization.Name, &e.Organization.CreatorID, &e.Organization.Status, &e.Organization.UpdaterID, &e.Organization.CreatedAt, &e.Organization.UpdatedAt,
+		&e.Role.ID, &e.Role.Name, &e.Role.Active, &e.Role.Organization.ID, pq.Array(&e.Role.Permissions), &e.Role.CreatedBy, &e.Role.UpdatedBy, &e.Role.CreatedAt, &e.Role.UpdatedAt,
+	)
+
+	return e, err
+}
