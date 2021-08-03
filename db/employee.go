@@ -133,9 +133,10 @@ func (store SQLStore) FindAdminEmployee(ctx context.Context, arg FindAdminEmploy
 // find an employee on id joining organization name and role and user
 const findEmployee = `
 	SELECT * FROM employees e
-		JOIN users u on ON u.id = $1
+		JOIN users u ON u.id = e."user"
 		JOIN organizations o ON o.id = e."organization"
-		JOIN roles r ON r.id = e."role"
+		JOIN roles r ON r.id = e."role"		
+		where u.id = $1;
 `
 
 // find an employee for the organization with roles
