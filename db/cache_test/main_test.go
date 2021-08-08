@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 		Password: "",
 		DB:       0,
 	})
-	defer client.Close()
+	// defer client.Close()
 
 	err = client.Ping(context.Background()).Err()
 	if err != nil {

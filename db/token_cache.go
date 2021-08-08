@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const duration = time.Minute // covert to env variable and use same for refresh token
+const duration = time.Minute * 5 // covert to env variable and use same for refresh token
 
 func (store *CacheStore) SetPrinciple(ctx context.Context, key string, principle Priniple) error {
 
@@ -15,7 +15,7 @@ func (store *CacheStore) SetPrinciple(ctx context.Context, key string, principle
 		return err
 	}
 
-	err = store.client.SetEX(ctx, key, string(data), duration).Err()
+	err = store.client.Set(ctx, key, string(data), duration).Err()
 	if err != nil {
 		return err
 	}
