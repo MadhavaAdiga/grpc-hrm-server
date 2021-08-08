@@ -29,6 +29,12 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to database: ", err)
 	}
 
+	// testCache := redis.NewClient(&redis.Options{
+	// 	Addr:     "localhost:6379",
+	// 	Password: "test_password",
+	// 	DB:       0,
+	// })
+
 	testSQLStore = db.NewSQlStore(testDB)
 
 	os.Exit(m.Run())

@@ -73,3 +73,8 @@ type Payroll struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type Priniple struct {
+	UserName     string
+	RefreshToken string
+}

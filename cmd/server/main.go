@@ -13,6 +13,7 @@ import (
 	"github.com/MadhavaAdiga/grpc-hrm-server/internal/role"
 	"github.com/MadhavaAdiga/grpc-hrm-server/internal/user"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/go-redis/redis/v8"
 	"github.com/hashicorp/go-hclog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -48,21 +49,34 @@ func main() {
 	}
 	log.Info("successfully connected to database", "driver", DBDriver)
 
+	// connect to NoSql server
+	cacheClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	// if status := cacheClient.Ping(context.Background()); err != nil {
+	// 	log.Error("unable to connect to cache", "error", err)
+	// 	os.Exit(1)
+	// }
+
 	// create store
 	store := db.NewSQlStore(conn)
+	cache := db.NewCacheStore(cacheClient)
+
+	// create a tokoen manager
+	manager, err := auth.NewPasetoManager()
+	if err != nil {
+		log.Error("Unable to create token", err)
+	}
 
 	// create servers
+	authServer := auth.NewAuthServer(store, log, manager)
 	userServer := user.NewUserServer(store, log)
 	organizationServer := organization.NewOrganizationServer(store, log)
 	employeeServer := employee.NewEmployeeServer(store, log)
 	roleServer := role.NewRoleServer(store, log)
 	payrollServer := payroll.NewPayrollServe(store, log)
-
-	// token manger
-	manager, err := auth.NewPasetoManager()
-	if err != nil {
-		log.Error("Unable to create token", err)
-	}
 
 	// permission set
 	accessableMethods := map[string][]int32{
@@ -70,7 +84,7 @@ func main() {
 	}
 
 	// create a auth interceptor
-	authInterceptor := auth.NewAuthInterceptor(manager, accessableMethods)
+	authInterceptor := auth.NewAuthInterceptor(manager, cache, accessableMethods)
 
 	// create tcp connection
 	listener, err := net.Listen("tcp", address)
@@ -83,6 +97,7 @@ func main() {
 		grpc.UnaryInterceptor(authInterceptor.Unary()),
 	)
 	// register servers
+	hrm.RegisterAuthServiceServer(grpcServer, authServer)
 	hrm.RegisterUserServiceServer(grpcServer, userServer)
 	hrm.RegisterOrganizationServiceServer(grpcServer, organizationServer)
 	hrm.RegisterEmployeeServiceServer(grpcServer, employeeServer)

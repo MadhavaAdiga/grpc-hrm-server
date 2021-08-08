@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/google/uuid"
 )
 
 /*
@@ -11,7 +12,7 @@ import (
 */
 type TokenManager interface {
 	// generate a new token
-	CreateToken(username string, durattion time.Duration, permissions []hrm.Permission) (string, error)
+	CreateToken(shortUid uuid.UUID, durattion time.Duration, permissions []hrm.Permission) (string, error)
 	// check if token is valid
 	VerifyToken(token string) (*Payload, error)
 }

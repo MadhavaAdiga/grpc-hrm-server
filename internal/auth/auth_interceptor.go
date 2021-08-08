@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -14,12 +15,14 @@ const authorizeHeader string = "authorization"
 
 type AuthInterceptor struct {
 	tokenManager    TokenManager
+	cacher          db.Cacher
 	accessableRoles map[string][]int32 // map of methods and permission-set
 }
 
-func NewAuthInterceptor(manager TokenManager, methods map[string][]int32) *AuthInterceptor {
+func NewAuthInterceptor(manager TokenManager, cacher db.Cacher, methods map[string][]int32) *AuthInterceptor {
 	return &AuthInterceptor{
 		tokenManager:    manager,
+		cacher:          cacher,
 		accessableRoles: methods,
 	}
 }

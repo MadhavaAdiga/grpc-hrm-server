@@ -3,6 +3,8 @@ package db
 import (
 	"context"
 	"database/sql"
+
+	"github.com/go-redis/redis/v8"
 )
 
 // SQLDBTX is an interface common method used in DB and TX struct od database/sql
@@ -23,5 +25,17 @@ type SQLStore struct {
 func NewSQlStore(db SQLDBTX) *SQLStore {
 	return &SQLStore{
 		db: db,
+	}
+}
+
+// Implements cacher interface
+type CacheStore struct {
+	client *redis.Client
+}
+
+// constructor function
+func NewCacheStore(client *redis.Client) *CacheStore {
+	return &CacheStore{
+		client: client,
 	}
 }

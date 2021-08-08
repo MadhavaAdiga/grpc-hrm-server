@@ -59,10 +59,14 @@ func TestFindUserById(t *testing.T) {
 }
 
 func createUser(t *testing.T) db.User {
+
+	password, err := utils.HashPassword("secret")
+	require.NoError(t, err)
+
 	arg := db.CreateUserParam{
 		FirstName:      utils.RandomName(),
 		LastName:       utils.RandomName(),
-		HashedPassword: "secret",
+		HashedPassword: password,
 		UserName:       utils.RandomName(),
 		Address:        utils.RandomString(15),
 		Email:          utils.RandomString(4),
@@ -83,6 +87,5 @@ func createUser(t *testing.T) db.User {
 	require.Equal(t, user.ContactNumber, arg.ContactNumber)
 
 	require.NotZero(t, user.CreatedAt)
-
 	return user
 }

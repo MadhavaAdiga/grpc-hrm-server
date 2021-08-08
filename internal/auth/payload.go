@@ -14,7 +14,7 @@ var ErrInvalidToken = errors.New("token is invalid")
 // implements jwt.Claims interface
 type Payload struct {
 	ID          uuid.UUID // id specific to the payload
-	UserName    string
+	ShortUid    uuid.UUID
 	Permissions []hrm.Permission
 	IssuedAt    time.Time
 	ExpireAt    time.Time
@@ -24,7 +24,7 @@ type Payload struct {
   constructor to create a new payload
   duration is used to specify the deadline
 */
-func NewPayload(userName string, duration time.Duration, permissions []hrm.Permission) (*Payload, error) {
+func NewPayload(shortUid uuid.UUID, duration time.Duration, permissions []hrm.Permission) (*Payload, error) {
 	id, err := uuid.NewRandom()
 
 	if err != nil {
@@ -33,7 +33,7 @@ func NewPayload(userName string, duration time.Duration, permissions []hrm.Permi
 
 	payload := &Payload{
 		ID:          id,
-		UserName:    userName,
+		ShortUid:    shortUid,
 		Permissions: permissions,
 		IssuedAt:    time.Now(),
 		ExpireAt:    time.Now().Add(duration),

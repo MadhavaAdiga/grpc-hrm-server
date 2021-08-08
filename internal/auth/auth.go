@@ -7,8 +7,8 @@ import (
 
 	"github.com/MadhavaAdiga/grpc-hrm-server/db"
 	"github.com/MadhavaAdiga/grpc-hrm-server/protos/hrm"
+	"github.com/MadhavaAdiga/grpc-hrm-server/utils"
 	"github.com/hashicorp/go-hclog"
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -49,18 +49,21 @@ func (server *AuthServer) Login(ctx context.Context, req *hrm.LoginRequest) (*hr
 		server.log.Error("request user not found", "error", err)
 		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
+
+	// check if the user is an employee to get an employee previlages
 	var isEmployee bool = true
 	employee, err := server.store.FindAdminEmployeeByUserID(ctx, user.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			server.log.Error("employee not found", "error", err)
 			isEmployee = false
+		} else {
+			server.log.Error("request user not found", "error", err)
+			return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 		}
-		server.log.Error("request user not found", "error", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(req.GetPassword()))
+	err = utils.ValidatePassword(user.HashedPassword, req.GetPassword())
 	if err != nil {
 		server.log.Error("invalid password", "error", err)
 		return nil, status.Errorf(codes.Unauthenticated, "username: %s and password does not match", req.GetUsername())
@@ -72,10 +75,12 @@ func (server *AuthServer) Login(ctx context.Context, req *hrm.LoginRequest) (*hr
 			permission[i] = hrm.Permission(v)
 		}
 	} else {
+		// Add a default permission for user to view profiles and salary
 		permission = []hrm.Permission{hrm.Permission_CAN_VIEW_EMPLOYEE, hrm.Permission_CAN_VIEW_SALARIES}
 	}
 
-	token, err := server.tokenManager.CreateToken(req.GetUsername(), tokenDuration, permission)
+	// replace userid with short UID
+	token, err := server.tokenManager.CreateToken(user.ID, tokenDuration, permission)
 	if err != nil {
 		server.log.Error("failed to generate access token", "error", err)
 		return nil, status.Errorf(codes.Internal, "token creation failed")
