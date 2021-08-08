@@ -15,7 +15,7 @@ func (store *CacheStore) SetPrinciple(ctx context.Context, key string, principle
 		return err
 	}
 
-	err = store.client.Set(ctx, key, string(data), duration).Err()
+	err = store.client.SetEX(ctx, key, string(data), duration).Err()
 	if err != nil {
 		return err
 	}
